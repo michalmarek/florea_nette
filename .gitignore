@@ -1,0 +1,31 @@
+# Composer
+/vendor/
+
+# Nette temp files
+/temp/*
+!/temp/.gitkeep
+/log/*
+!/log/.gitkeep
+
+# Local configuration (contains DB credentials, API keys)
+/config/local.neon
+
+# IDE
+/.idea/
+/.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Development
+*.log
+*.cache
+.env
+.env.local
+
+# Node (pokud později přidáš frontend build)
+/node_modules/
+/www/dist/

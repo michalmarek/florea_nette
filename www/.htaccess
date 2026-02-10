@@ -1,0 +1,22 @@
+# Apache configuration for Nette Framework
+
+# Enable URL rewriting
+RewriteEngine On
+
+# Redirect to HTTPS (uncomment in production)
+# RewriteCond %{HTTPS} !on
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Prevent access to .git, .env, etc.
+RewriteRule ^\.(?!well-known) - [F]
+
+# Route everything through index.php (except existing files/directories)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule !\.(pdf|js|ico|gif|jpg|png|css|rar|zip|tar\.gz|woff|woff2|ttf|eot|svg)$ index.php [L]
+
+# Disable directory listing
+Options -Indexes
+
+# Disable PHP error display (Tracy handles this)
+php_flag display_errors off

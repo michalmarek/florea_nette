@@ -1,0 +1,39 @@
+# Main configuration file
+# Includes domain mapping and service definitions
+
+includes:
+    - domains.neon
+    - services.neon
+
+
+parameters:
+    # Application-wide parameters
+    productsPerPage: 20
+    freeShippingThreshold: 1000
+    defaultLocale: cs_CZ
+
+
+application:
+    errorPresenter: Error:Error
+    mapping:
+        *: App\UI\*\**Presenter
+
+
+database:
+    # Database configuration must be in local.neon (contains credentials)
+    # Example:
+    # dsn: 'mysql:host=127.0.0.1;dbname=florea'
+    # user: root
+    # password: ''
+    # options:
+    #     lazy: true
+
+
+session:
+    expiration: 14 days
+    cookie_samesite: Lax
+    cookie_httponly: true
+
+
+http:
+    frames: true  # Allow iframes (for payment gateways)

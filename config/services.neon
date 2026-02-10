@@ -1,0 +1,37 @@
+# Service definitions
+# All application services registered in DI container
+
+services:
+    # === Routing ===
+    router: App\Bootstrap\RouterFactory::createRouter
+
+
+    # === Shop Detection ===
+    # ShopDetector needs domain mapping from parameters
+    - App\Shop\ShopDetector(%domainMapping%)
+
+    # ShopRepository needs database connection (autowired)
+    - App\Shop\ShopRepository
+
+    # ShopContext will be registered dynamically in Bootstrap
+    # after shop detection (cannot be autowired here)
+
+
+    # === Custom Presenter Factory ===
+    # Handles hierarchical presenter resolution (Base vs Shop-specific)
+    application.presenterFactory: App\Bootstrap\PresenterFactory
+
+
+    # === Repositories ===
+    # (Will be added as we build them)
+    # - App\Models\Product\ProductRepository
+    # - App\Models\Category\CategoryRepository
+    # - App\Models\Cart\CartRepository
+    # - App\Models\Customer\CustomerRepository
+
+
+    # === Services ===
+    # (Will be added as we build them)
+    # - App\Models\Product\ProductVariantService
+    # - App\Models\Customer\CustomerAuthService
+    # - App\Email\EmailService

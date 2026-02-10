@@ -1,0 +1,47 @@
+# Local configuration template
+# Copy this file to local.neon and fill in your credentials
+# local.neon is gitignored and will not be committed
+
+parameters:
+    # Environment (development/production)
+    debugMode: true
+
+
+database:
+    dsn: 'mysql:host=127.0.0.1;dbname=florea'
+    user: root
+    password: ''
+    options:
+        lazy: true
+        # Charset for proper Czech characters
+        PDO::MYSQL_ATTR_INIT_COMMAND: "SET NAMES utf8mb4"
+
+
+tracy:
+    # Tracy debugger settings
+    strictMode: true
+    showBar: true
+    maxDepth: 4
+    maxLength: 150
+
+
+# Email settings (SMTP for development - MailHog recommended)
+mail:
+    smtp: true
+    host: localhost
+    port: 1025
+    # username: ''
+    # password: ''
+    # secure: ''  # ssl/tls
+
+
+# API keys (fill in production values)
+# maileon:
+#     apiKey: ''
+#     accountId: ''
+
+# payment:
+#     gopay:
+#         goid: ''
+#         clientId: ''
+#         clientSecret: ''
