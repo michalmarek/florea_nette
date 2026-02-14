@@ -38,13 +38,7 @@ class AssetMapper implements Mapper
         private readonly string $baseUrl,
         private readonly string $basePath,
         private readonly string $manifestFile = 'manifest.json',
-        array $customTypeMapping = []
-    ) {
-        // Možnost přepsat mapping při registraci
-        if (!empty($customTypeMapping)) {
-            $this->typeMapping = array_merge($this->typeMapping, $customTypeMapping);
-        }
-    }
+    ) {}
 
     /**
      * Resolves asset z manifestu s automatickým mapováním do podsložek
