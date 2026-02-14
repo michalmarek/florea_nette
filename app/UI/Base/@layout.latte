@@ -1,0 +1,51 @@
+{* Base layout for all shops *}
+{* Shop-specific layouts can override this in UI/{Shop}/@layout.latte *}
+
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{ifset #title}{block title}{/block} | {/ifset}{$shopContext->getWebsiteName()}</title>
+
+    {* Bootstrap 5.3.3 CSS *}
+    {asset "css/base.css"}
+</head>
+<body>
+
+{* Header *}
+<header class="border-bottom mb-4">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand fw-bold" href="{link Home:default}">
+                    {$shopContext->getWebsiteName()}
+                    {icon "products-historicka-dlazba"}
+                </a>
+            </div>
+        </nav>
+</header>
+
+{* Flash messages *}
+<div n:foreach="$flashes as $flash" class="container">
+        <div class="alert alert-{$flash->type} alert-dismissible fade show" role="alert">
+            {$flash->message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+</div>
+
+{* Main content *}
+<main class="container">
+        {include content}
+</main>
+
+{* Footer *}
+<footer class="border-top mt-5 py-4 text-center text-muted">
+        <div class="container">
+            <p class="mb-0">
+                &copy; {date('Y')} {$shopContext->getSeller()->getCompanyName()}
+            </p>
+        </div>
+</footer>
+
+</body>
+</html>

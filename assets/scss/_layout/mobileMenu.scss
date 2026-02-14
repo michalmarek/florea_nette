@@ -1,0 +1,68 @@
+@use '../_autoload' as *;
+
+
+.mobileMenu__button {
+  display: block;
+  width: 50px;
+  height: 50px;
+  padding: 10px 0 0 0;
+  color: #fff;
+  background: $color-primary;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.mobileMenu__button:hover {
+  background: $color-primary;
+}
+
+.mobileMenu__hamburger {
+  width: 24px;
+  height: 16px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 0 auto 6px;
+}
+
+.mobileMenu__hamburger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.mobileMenu__hamburgerText {
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-align: center;
+  transition: opacity 0.3s ease;
+}
+
+/* Stav otevřeného menu (křížek) */
+.mobileMenu__button[aria-expanded="true"] .mobileMenu__hamburger span:first-child {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.mobileMenu__button[aria-expanded="true"] .mobileMenu__hamburger span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobileMenu__button[aria-expanded="true"] .mobileMenu__hamburger span:last-child {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+
+
+.mobileMenu {
+  position: fixed;
+  z-index: 1040;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  background: $color-primary;
+  transition: none !important;
+}

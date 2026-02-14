@@ -2,24 +2,33 @@
 # All application services registered in DI container
 
 services:
-    # === Routing ===
-    router: App\Bootstrap\RouterFactory::createRouter
+    shopContext:
+        type: App\Shop\ShopContext
+        imported: true
 
+    router:
+        type: Nette\Routing\Router
+        imported: true
+
+    application.application:
+        setup:
+            - $errorPresenter('Error:Error')
+            - $error4xxPresenter('Error:Error')
+
+    # === Routing ===
+    # Router is created manually in Bootstrap.php after shop detection
+    # (cannot be here because it needs currentShopTextId which is not available yet)
 
     # === Shop Detection ===
-    # ShopDetector needs domain mapping from parameters
-    - App\Shop\ShopDetector(%domainMapping%)
-
-    # ShopRepository needs database connection (autowired)
-    - App\Shop\ShopRepository
+    # ShopDetector and ShopRepository are used only during bootstrap
+    # They are created manually with temporary DB connection
 
     # ShopContext will be registered dynamically in Bootstrap
     # after shop detection (cannot be autowired here)
 
 
     # === Custom Presenter Factory ===
-    # Handles hierarchical presenter resolution (Base vs Shop-specific)
-    application.presenterFactory: App\Bootstrap\PresenterFactory
+    # PresenterFactory is created manually in Bootstrap.php
 
 
     # === Repositories ===

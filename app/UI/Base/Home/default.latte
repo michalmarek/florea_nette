@@ -1,0 +1,30 @@
+{block title}Úvodní stránka{/block}
+
+{block content}
+    <h1>Florea e-shop funguje!</h1>
+
+    <div class="alert alert-success">
+        <strong>Gratulujeme!</strong> Nette aplikace s multi-shop architekturou úspěšně běží.
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Detekovaný shop</h2>
+            <table class="table table-sm">
+                <tr><th>Shop ID</th><td>{$shopContext->getId()}</td></tr>
+                <tr><th>Text ID</th><td><code>{$shopContext->getTextId()}</code></td></tr>
+                <tr><th>Doména</th><td>{$shopContext->getDomain()}</td></tr>
+                <tr><th>Název</th><td>{$shopContext->getWebsiteName()}</td></tr>
+                <tr><th>Email</th><td>{$shopContext->getEmail()}</td></tr>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h2>Prodejce</h2>
+            <table class="table table-sm">
+                <tr><th>Firma</th><td>{$shopContext->getSeller()->getCompanyName()}</td></tr>
+                <tr><th>Adresa</th><td>{$shopContext->getSeller()->getFullAddress()}</td></tr>
+                <tr><th>IČO</th><td>{$shopContext->getSeller()->getRegistrationNumber()}</td></tr>
+            </table>
+        </div>
+    </div>
+{/block}

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "42454296768b3754c9254bec0062ef9e",
+    "content-hash": "331435a4045e12c1bf77c3b6dea0f36b",
     "packages": [
         {
             "name": "latte/latte",
@@ -189,6 +189,82 @@
                 "source": "https://github.com/nette/application/tree/v3.2.9"
             },
             "time": "2025-12-19T11:39:00+00:00"
+        },
+        {
+            "name": "nette/assets",
+            "version": "v1.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nette/assets.git",
+                "reference": "d747983c8a8ee5e8508ab9b45282c869e6b1f623"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nette/assets/zipball/d747983c8a8ee5e8508ab9b45282c869e6b1f623",
+                "reference": "d747983c8a8ee5e8508ab9b45282c869e6b1f623",
+                "shasum": ""
+            },
+            "require": {
+                "nette/utils": "^4.0.6",
+                "php": "8.1 - 8.5"
+            },
+            "conflict": {
+                "nette/bootstrap": "<3.2.5",
+                "nette/http": "<3.3.2"
+            },
+            "require-dev": {
+                "latte/latte": "^3.0.22",
+                "mockery/mockery": "^1.6@stable",
+                "nette/application": "^3.2",
+                "nette/di": "^3.2",
+                "nette/http": "^3.3.2",
+                "nette/tester": "^2.5",
+                "phpstan/phpstan-nette": "^2.0@stable",
+                "tracy/tracy": "^2.9"
+            },
+            "suggest": {
+                "latte/latte": "Allows using Assets in templates"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Nette\\": "src"
+                },
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause",
+                "GPL-2.0-only",
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "David Grudl",
+                    "homepage": "https://davidgrudl.com"
+                },
+                {
+                    "name": "Nette Community",
+                    "homepage": "https://nette.org/contributors"
+                }
+            ],
+            "description": "🎨 Nette Assets: elegant asset management for PHP with versioning, caching and mappers for various storage backends.",
+            "homepage": "https://nette.org",
+            "keywords": [
+                "asset management",
+                "assets",
+                "nette",
+                "resources",
+                "static files",
+                "versioning"
+            ],
+            "support": {
+                "issues": "https://github.com/nette/assets/issues",
+                "source": "https://github.com/nette/assets/tree/v1.0.5"
+            },
+            "time": "2025-11-24T02:49:53+00:00"
         },
         {
             "name": "nette/bootstrap",

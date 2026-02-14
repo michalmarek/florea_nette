@@ -1,0 +1,86 @@
+@use '../_autoload' as *;
+
+//
+// Check/radio
+//
+
+.form-check {
+    display: flex;
+    align-items: baseline;
+    gap: .5rem;
+    min-height: $font-size-base * $line-height-base;
+    padding-left: 1.5em;
+    margin-bottom: .125rem;
+
+    .form-check-input {
+        float: left;
+        margin-left: 1.5em * -1;
+    }
+}
+
+.form-check-input {
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+    margin-top: calc(#{$line-height-base} - 1em); // line-height minus check height
+    vertical-align: top;
+    appearance: none;
+    background-color: $form-input-bg;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border: $form-border-width solid $form-border-color;
+    print-color-adjust: exact; // Keep themed appearance for print
+
+    &[type="checkbox"] {
+        border-radius: .25rem;
+    }
+
+    &[type="radio"] {
+        // stylelint-disable-next-line property-disallowed-list
+        border-radius: 50%;
+    }
+
+    &:active {
+        filter: brightness(90%);
+    }
+
+    &:focus {
+        border-color: tint-color($color-primary, 50%);
+        outline: 0;
+        box-shadow: $focus-ring-box-shadow;
+    }
+
+    &:checked {
+        background-color: $color-primary;
+        border-color: $color-primary;
+
+        &[type="checkbox"] {
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='#fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/></svg>");
+        }
+
+        &[type="radio"] {
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='2' fill='#fff'/></svg>");
+        }
+    }
+
+    &:disabled {
+        pointer-events: none;
+        filter: none;
+        opacity: .5;
+    }
+
+    // Use disabled attribute in addition of :disabled pseudo-class
+    // See: https://github.com/twbs/bootstrap/issues/28247
+    &[disabled],
+    &:disabled {
+        ~ .form-check-label {
+            cursor: default;
+            opacity: .5;
+        }
+    }
+}
+
+.form-check-label {
+    user-select: none;
+}

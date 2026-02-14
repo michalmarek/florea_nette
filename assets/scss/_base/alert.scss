@@ -1,0 +1,57 @@
+@use '../_autoload' as *;
+
+//
+// Base styles
+//
+
+.alert {
+    --alert-bg: transparent;
+    --alert-color: inherit;
+    --alert-border: 1px solid var(--alert-border-color);
+    --alert-link-color: inherit;
+
+    position: relative;
+    padding: ($spacer * .75) $spacer;
+    margin-bottom: 1rem;
+    color: var(--alert-color);
+    background-color: var(--alert-bg);
+    border: var(--alert-border);
+    border-radius: $border-radius;
+
+    a {
+        font-weight: $font-weight-bold;
+        color: var(--alert-link-color);
+    }
+}
+
+
+.alert-primary {
+    --alert-color: #{shade-color($color-primary, 60%)};
+    --alert-bg: #{tint-color($color-primary, 80%)};
+    --alert-border-color: #{tint-color($color-primary, 60%)};
+    --alert-link-color: #{shade-color($color-primary, 60%)};
+}
+.alert-secondary {
+    --alert-color: #{shade-color($color-secondary, 60%)};
+    --alert-bg: #{tint-color($color-secondary, 80%)};
+    --alert-border-color: #{tint-color($color-secondary, 60%)};
+    --alert-link-color: #{shade-color($color-secondary, 60%)};
+}
+.alert-success {
+    --alert-color: #{shade-color($color-success, 60%)};
+    --alert-bg: #{tint-color($color-success, 80%)};
+    --alert-border-color: #{tint-color($color-success, 60%)};
+    --alert-link-color: #{shade-color($color-success, 60%)};
+}
+.alert-danger {
+    --alert-color: #{shade-color($color-danger, 60%)};
+    --alert-bg: #{tint-color($color-danger, 80%)};
+    --alert-border-color: #{tint-color($color-danger, 60%)};
+    --alert-link-color: #{shade-color($color-danger, 60%)};
+}
+.alert-warning {
+    --alert-color: #{shade-color($color-warning, 60%)};
+    --alert-bg: #{tint-color($color-warning, 80%)};
+    --alert-border-color: #{tint-color($color-warning, 60%)};
+    --alert-link-color: #{shade-color($color-warning, 60%)};
+}

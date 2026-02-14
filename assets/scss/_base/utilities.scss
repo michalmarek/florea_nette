@@ -1,0 +1,49 @@
+@use '../_autoload' as *;
+
+// Flex
+.d-flex {
+    display: flex;
+}
+.justify-between {
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+
+// Plna sire
+.full-width {
+    position: relative;
+    left: calc(50% - (var(--vw, 1vw) * 50));
+    width: calc(var(--vw, 1vw) * 100);
+}
+
+
+// Stretched link
+.stretched-link {
+    &::after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+        content: "";
+    }
+}
+
+
+// zaoblene rohy
+.rounded-0 {
+    border-radius: 0 !important;
+}
+
+
+// animace "loading"
+@keyframes fadeInOut {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.loading {
+    animation: fadeInOut 1.5s infinite;
+}

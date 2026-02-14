@@ -1,0 +1,59 @@
+# Routes for velke-vence.cz shop
+# Different URL structure than florea
+
+routes:
+    # Homepage
+    - mask: ''
+      presenter: Home
+      action: default
+
+    # Product detail - JINÝ FORMÁT: /detail/cervena-ruze-123
+    - mask: 'detail/<slug>-<id \d+>'
+      presenter: Product
+      action: detail
+
+    # Category listing
+    - mask: 'kategorie/<slug>'
+      presenter: Category
+      action: list
+
+    # Cart & Checkout
+    - mask: 'kosik'
+      presenter: Cart
+      action: default
+
+    - mask: 'objednavka'
+      presenter: Checkout
+      action: default
+
+    # Authentication
+    - mask: 'prihlaseni'
+      presenter: Auth
+      action: signIn
+
+    - mask: 'registrace'
+      presenter: Auth
+      action: signUp
+
+    - mask: 'odhlaseni'
+      presenter: Auth
+      action: signOut
+
+    # Account
+    - mask: 'ucet'
+      presenter: Account
+      action: default
+
+    - mask: 'ucet/objednavky'
+      presenter: Account
+      action: orders
+
+    # Static pages - NEMÁ kontakt (pokud někdo zadá /kontakt → 404)
+    - mask: 'o-nas'
+      presenter: Page
+      action: about
+
+    # Fallback
+    - mask: '<presenter>/<action>[/<id>]'
+      presenter: Home
+      action: default

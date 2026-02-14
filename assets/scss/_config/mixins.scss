@@ -1,0 +1,67 @@
+@use 'sass:map';
+@use 'sass:color';
+@use 'variables' as *;
+
+
+@function breakpoint-min($name, $breakpoints: $breakpoints) {
+    $min: map.get($breakpoints, $name);
+    @return if($min != 0, $min, null);
+}
+
+@mixin media-breakpoint-up($name, $breakpoints: $breakpoints) {
+    $min: breakpoint-min($name, $breakpoints);
+    @if $min {
+        @media (min-width: $min) {
+            @content;
+        }
+    } @else {
+        @content;
+    }
+}
+
+
+
+// Tint a color: mix a color with white
+@function tint-color($color, $weight) {
+    @return color.mix(white, $color, $weight);
+}
+
+// Shade a color: mix a color with black
+@function shade-color($color, $weight) {
+    @return color.mix(black, $color, $weight);
+}
+
+// Tint a color: mix a color with white
+@function tint-color($color, $weight) {
+    @return color.mix(white, $color, $weight);
+}
+
+// Shade the color if the weight is positive, else tint it
+@function shift-color($color, $weight) {
+    @return if($weight > 0, shade-color($color, $weight), tint-color($color, -$weight));
+}
+
+// Colors
+@function to-rgb($value) {
+    @return red($value), green($value), blue($value);
+}
+
+
+
+@mixin reset-text {
+    font-family: $font-family-base;
+    // We deliberately do NOT reset font-size or overflow-wrap / word-wrap.
+    font-style: normal;
+    font-weight: $font-weight-normal;
+    line-height: $line-height-base;
+    text-align: left; // Fallback for where `start` is not supported
+    text-align: start;
+    text-decoration: none;
+    text-shadow: none;
+    text-transform: none;
+    letter-spacing: normal;
+    word-break: normal;
+    white-space: normal;
+    word-spacing: normal;
+    line-break: auto;
+}

@@ -1,0 +1,57 @@
+@use '../_autoload' as *;
+
+//
+// Switch
+//
+
+.form-switch {
+    padding-left: 2.5em;
+
+    .form-check-input {
+        width: 2em;
+        margin-left: 2.5em * -1;
+        background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{rgba(#000, .25)}'/></svg>");
+        background-position: left center;
+        border-radius: 2em;
+        transition: background-position .15s ease-in-out;
+
+        &:focus {
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{tint-color($color-primary, 50%)}'/></svg>");
+        }
+
+        &:checked {
+            background-position: right center;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#fff'/></svg>");
+        }
+    }
+
+    &.form-check-reverse {
+        padding-right: 2.5em;
+        padding-left: 0;
+
+        .form-check-input {
+            margin-right: 2.5em * -1;
+            margin-left: 0;
+        }
+    }
+}
+
+.form-check-inline {
+    display: inline-block;
+    margin-right: 1rem;
+}
+
+.btn-check {
+    position: absolute;
+    clip: rect(0, 0, 0, 0);
+    pointer-events: none;
+
+    &[disabled],
+    &:disabled {
+        + .btn {
+            pointer-events: none;
+            filter: none;
+            opacity: .65;
+        }
+    }
+}

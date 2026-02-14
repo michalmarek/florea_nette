@@ -1,0 +1,58 @@
+@use '_config/variables' as *;
+@use '_config/mixins' as *;
+
+@use '_forms/labels' as *;
+@use '_forms/form-control' as *;
+@use '_forms/form-select' as *;
+@use '_forms/form-check' as *;
+@use '_forms/form-switch' as *;
+@use '_forms/input-group' as *;
+@use '_forms/buttons' as *;
+
+
+
+// Nette Forms dialog
+.netteFormsModal {
+  text-align: left !important;
+  border: none !important;
+  box-shadow: 0 0 25px rgba(0,0,0, .5) !important;
+
+  button {
+    display: block;
+    width: 100%;
+    padding: 10px !important;
+    font-weight: bold;
+    color: #fff;
+    background: $color-primary;
+    border: none;
+    border-radius: 60px;
+  }
+}
+
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $m-1 $m-lg;
+  margin-bottom: $m-lg;
+  padding-top: $m-1;
+  border: 3px solid tint-color($color-primary, 80%);
+}
+.form__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: $m-1;
+  margin-bottom: $m-1;
+  padding: 0 $m-1;
+}
+.form__submit {
+  padding: $p-1 $p-1 calc($p-1 - 3px) $p-1;
+  text-align: center;
+  background: tint-color($color-primary, 80%);
+
+  .btn {
+    padding: .5rem 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+}

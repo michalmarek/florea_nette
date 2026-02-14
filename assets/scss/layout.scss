@@ -1,0 +1,10 @@
+@use '../../node_modules/modern-normalize/modern-normalize.css';
+
+@use '_layout/categories' as *;
+@use '_layout/content' as *;
+@use '_layout/footer' as *;
+@use '_layout/header' as *;
+@use '_layout/logo' as *;
+@use '_layout/language' as *;
+@use '_layout/mobileMenu' as *;
+@use '_layout/navigation' as *;

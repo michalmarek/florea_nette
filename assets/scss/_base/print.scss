@@ -1,0 +1,20 @@
+@use '../_autoload' as *;
+
+//
+// Print
+//
+
+@media print {
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    .noprint {
+        display: none;
+    }
+}

@@ -1,0 +1,42 @@
+@use '../_autoload' as *;
+
+//
+// Labels
+//
+
+.form-label {
+    display: inline-block;
+    margin-bottom: .25rem;
+}
+
+// For use with horizontal and inline forms, when you need the label (or legend)
+// text to align with the form controls.
+.col-form-label {
+    padding-top: calc(.375rem + 1px);
+    padding-bottom: calc(.375rem + 1px);
+    margin-bottom: 0; // Override the `<legend>` default
+    font-size: inherit; // Override the `<legend>` default
+    line-height: $line-height-base;
+}
+
+.col-form-label-lg {
+    padding-top: calc(.5rem + 1px);
+    padding-bottom: calc(.5rem + 1px);
+    font-size: $font-size-lg;
+}
+
+.col-form-label-sm {
+    padding-top: calc(.25rem + 1px);
+    padding-bottom: calc(.25rem + 1px);
+    font-size: $font-size-sm;
+}
+
+
+//
+// Form text
+//
+
+.form-text {
+    margin-top: .25rem;
+    font-size: $font-size-sm;
+}

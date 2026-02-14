@@ -1,0 +1,51 @@
+@use '../_autoload' as *;
+
+:root {
+    line-height: $line-height-base;
+    font-family: $font-family-base;
+}
+
+h1, h2, h3, h4, h5, figure, ol, ul {
+    margin: 0;
+}
+
+p:first-child {
+    margin-top: 0;
+}
+
+p:last-child {
+    margin-bottom: 0;
+}
+
+ol, ul {
+    list-style: none;
+    padding-inline: 0;
+}
+
+h1, h2, h3, h4, h5 {
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+img {
+    display: block;
+    max-inline-size: 100%;
+}
+
+small, .small {
+    font-size: .875rem;
+}
+
+a {
+    color: $link-color;
+    text-decoration: $link-decoration;
+
+    &:hover, &:focus, &:active {
+        color: $link-hover-color;
+        text-decoration: $link-hover-decoration;
+    }
+}
+a[href^="tel:"] {
+    color: $color-base;
+    text-decoration: none;
+}

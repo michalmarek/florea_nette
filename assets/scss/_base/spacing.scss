@@ -1,0 +1,83 @@
+@use 'sass:map';
+@use '../_autoload' as *;
+
+//
+// Padding
+//
+.p-0 {padding: map.get($spacers, 0) !important;}
+.p-1 {padding: map.get($spacers, 1) !important;}
+.p-sm {padding: map.get($spacers, "sm") !important;}
+.p-lg {padding: map.get($spacers, "lg") !important;}
+
+.px-0 {padding-inline: map.get($spacers, 0) !important;}
+.px-1 {padding-inline: map.get($spacers, 1) !important;}
+.px-sm {padding-inline: map.get($spacers, "sm") !important;}
+.px-lg {padding-inline: map.get($spacers, "lg") !important;}
+
+.py-0 {padding-block: map.get($spacers, 0) !important;}
+.py-1 {padding-block: map.get($spacers, 1) !important;}
+.py-sm {padding-block: map.get($spacers, "sm") !important;}
+.py-lg {padding-block: map.get($spacers, "lg") !important;}
+
+.ps-0 {padding-inline-start: map.get($spacers, 0) !important;}
+.ps-1 {padding-inline-start: map.get($spacers, 1) !important;}
+.ps-sm {padding-inline-start: map.get($spacers, "sm") !important;}
+.ps-lg {padding-inline-start: map.get($spacers, "lg") !important;}
+
+.pe-0 {padding-inline-end: map.get($spacers, 0) !important;}
+.pe-1 {padding-inline-end: map.get($spacers, 1) !important;}
+.pe-sm {padding-inline-end: map.get($spacers, "sm") !important;}
+.pe-lg {padding-inline-end: map.get($spacers, "lg") !important;}
+
+.pt-0 {padding-block-start: map.get($spacers, 0) !important;}
+.pt-1 {padding-block-start: map.get($spacers, 1) !important;}
+.pt-sm {padding-block-start: map.get($spacers, "sm") !important;}
+.pt-lg {padding-block-start: map.get($spacers, "lg") !important;}
+
+.pb-0 {padding-block-end: map.get($spacers, 0) !important;}
+.pb-1 {padding-block-end: map.get($spacers, 1) !important;}
+.pb-sm {padding-block-end: map.get($spacers, "sm") !important;}
+.pb-lg {padding-block-end: map.get($spacers, "lg") !important;}
+
+
+//
+// Margin
+//
+.m-0 {margin: map.get($spacers, 0) !important;}
+.m-1 {margin: map.get($spacers, 1) !important;}
+.m-sm {margin: map.get($spacers, "sm") !important;}
+.m-lg {margin: map.get($spacers, "lg") !important;}
+.m-auto {margin: auto !important;}
+
+.mx-0 {margin-inline: map.get($spacers, 0) !important;}
+.mx-1 {margin-inline: map.get($spacers, 1) !important;}
+.mx-sm {margin-inline: map.get($spacers, "sm") !important;}
+.mx-lg {margin-inline: map.get($spacers, "lg") !important;}
+.mx-auto {margin-inline: auto !important;}
+
+.my-0 {margin-block: map.get($spacers, 0) !important;}
+.my-1 {margin-block: map.get($spacers, 1) !important;}
+.my-sm {margin-block: map.get($spacers, "sm") !important;}
+.my-lg {margin-block: map.get($spacers, "lg") !important;}
+
+.ms-0 {margin-inline-start: map.get($spacers, 0) !important;}
+.ms-1 {margin-inline-start: map.get($spacers, 1) !important;}
+.ms-sm {margin-inline-start: map.get($spacers, "sm") !important;}
+.ms-lg {margin-inline-start: map.get($spacers, "lg") !important;}
+.ms-auto {margin-inline-start: auto !important;}
+
+.me-0 {margin-inline-end: map.get($spacers, 0) !important;}
+.me-1 {margin-inline-end: map.get($spacers, 1) !important;}
+.me-sm {margin-inline-end: map.get($spacers, "sm") !important;}
+.me-lg {margin-inline-end: map.get($spacers, "lg") !important;}
+.me-auto {margin-inline-end: auto !important;}
+
+.mt-0 {margin-block-start: map.get($spacers, 0) !important;}
+.mt-1 {margin-block-start: map.get($spacers, 1) !important;}
+.mt-sm {margin-block-start: map.get($spacers, "sm") !important;}
+.mt-lg {margin-block-start: map.get($spacers, "lg") !important;}
+
+.mb-0 {margin-block-end: map.get($spacers, 0) !important;}
+.mb-1 {margin-block-end: map.get($spacers, 1) !important;}
+.mb-sm {margin-block-end: map.get($spacers, "sm") !important;}
+.mb-lg {margin-block-end: map.get($spacers, "lg") !important;}

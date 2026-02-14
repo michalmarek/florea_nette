@@ -1,0 +1,202 @@
+@use '../_autoload' as *;
+
+$carousel-control-color:            #fff;
+$carousel-control-opacity:          .5;
+$carousel-control-hover-opacity:    .9;
+$carousel-control-icon-width:       2rem;
+$carousel-control-width:            15%;
+$carousel-indicator-width:          30px;
+$carousel-indicator-height:         3px;
+$carousel-indicator-spacer:         3px;
+$carousel-indicator-bg:             #fff;
+$carousel-indicator-opacity:        .5;
+$carousel-indicator-active-opacity: 1;
+
+// Notes on the classes:
+//
+// 1. .carousel.pointer-event should ideally be pan-y (to allow for users to scroll vertically)
+//    even when their scroll action started on a carousel, but for compatibility (with Firefox)
+//    we're preventing all actions instead
+// 2. The .carousel-item-start and .carousel-item-end is used to indicate where
+//    the active slide is heading.
+// 3. .active.carousel-item is the current slide.
+// 4. .active.carousel-item-start and .active.carousel-item-end is the current
+//    slide in its in-transition state. Only one of these occurs at a time.
+// 5. .carousel-item-next.carousel-item-start and .carousel-item-prev.carousel-item-end
+//    is the upcoming slide in transition.
+
+.carousel {
+    position: relative;
+}
+
+.carousel.pointer-event {
+    touch-action: pan-y;
+}
+
+.carousel-inner {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+
+    // clearfix
+    &::after {
+        display: block;
+        clear: both;
+        content: "";
+    }
+}
+
+.carousel-item {
+    position: relative;
+    display: none;
+    float: left;
+    width: 100%;
+    margin-right: -100%;
+    backface-visibility: hidden;
+    transition: transform .6s ease-in-out;
+}
+
+.carousel-item.active,
+.carousel-item-next,
+.carousel-item-prev {
+    display: block;
+}
+
+.carousel-item-next:not(.carousel-item-start),
+.active.carousel-item-end {
+    transform: translateX(100%);
+}
+
+.carousel-item-prev:not(.carousel-item-end),
+.active.carousel-item-start {
+    transform: translateX(-100%);
+}
+
+
+//
+// Alternate transitions
+//
+
+.carousel-fade {
+    .carousel-item {
+        opacity: 0;
+        transition-property: opacity;
+        transform: none;
+    }
+
+    .carousel-item.active,
+    .carousel-item-next.carousel-item-start,
+    .carousel-item-prev.carousel-item-end {
+        z-index: 1;
+        opacity: 1;
+    }
+
+    .active.carousel-item-start,
+    .active.carousel-item-end {
+        z-index: 0;
+        opacity: 0;
+        transition: opacity 0s .6s;
+    }
+}
+
+
+//
+// Left/right controls for nav
+//
+
+.carousel-control-prev,
+.carousel-control-next {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    // Use flex for alignment (1-3)
+    display: flex; // 1. allow flex styles
+    align-items: center; // 2. vertically center contents
+    justify-content: center; // 3. horizontally center contents
+    width: 15%;
+    padding: 0;
+    color: $carousel-control-color;
+    text-align: center;
+    background: none;
+    border: 0;
+    opacity: $carousel-control-opacity;
+    transition: opacity .15s ease;
+
+    // Hover/focus state
+    &:hover,
+    &:focus {
+        color: $carousel-control-color;
+        text-decoration: none;
+        outline: 0;
+        opacity: $carousel-control-hover-opacity;
+    }
+}
+.carousel-control-prev {
+    left: 0;
+}
+.carousel-control-next {
+    right: 0;
+}
+
+// Icons for within
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    display: inline-block;
+    width: $carousel-control-icon-width;
+    height: $carousel-control-icon-width;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: 100% 100%;
+}
+
+.carousel-control-prev-icon {
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{$carousel-control-color}'><path d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/></svg>");
+}
+.carousel-control-next-icon {
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{$carousel-control-color}'><path d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/></svg>");
+}
+
+// Optional indicator pips/controls
+//
+// Add a container (such as a list) with the following class and add an item (ideally a focusable control,
+// like a button) with data-bs-target for each slide your carousel holds.
+
+.carousel-indicators {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    // Use the .carousel-control's width as margin so we don't overlay those
+    margin-right: $carousel-control-width;
+    margin-bottom: 1rem;
+    margin-left: $carousel-control-width;
+
+    [data-bs-target] {
+        box-sizing: content-box;
+        flex: 0 1 auto;
+        width: $carousel-indicator-width;
+        height: $carousel-indicator-height;
+        padding: 0;
+        margin-right: $carousel-indicator-spacer;
+        margin-left: $carousel-indicator-spacer;
+        text-indent: -999px;
+        cursor: pointer;
+        background-color: $carousel-indicator-bg;
+        background-clip: padding-box;
+        border: 0;
+        // Use transparent borders to increase the hit area by 10px on top and bottom.
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        opacity: $carousel-indicator-opacity;
+        transition: opacity .6s ease;
+    }
+
+    .active {
+        opacity: $carousel-indicator-active-opacity;
+    }
+}

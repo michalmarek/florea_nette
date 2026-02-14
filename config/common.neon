@@ -14,19 +14,13 @@ parameters:
 
 
 application:
-    errorPresenter: Error:Error
     mapping:
         *: App\UI\*\**Presenter
 
 
-database:
-    # Database configuration must be in local.neon (contains credentials)
-    # Example:
-    # dsn: 'mysql:host=127.0.0.1;dbname=florea'
-    # user: root
-    # password: ''
-    # options:
-    #     lazy: true
+latte:
+    extensions:
+        - App\Core\Latte\IconExtension
 
 
 session:
@@ -37,3 +31,8 @@ session:
 
 http:
     frames: true  # Allow iframes (for payment gateways)
+
+
+assets:
+    mapping:
+        default: App\Core\AssetMapper('/assets', %wwwDir%/assets)

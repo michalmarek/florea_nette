@@ -1,12 +1,9 @@
-<?php declare(strict_types=1);
+<?php
 
-// Load Composer autoloader
+declare(strict_types=1);
+
 require __DIR__ . '/../vendor/autoload.php';
 
-// Enable Tracy debugger
-Tracy\Debugger::enable(Tracy\Debugger::Development, __DIR__ . '/../log');
-
-// Bootstrap application
 $bootstrap = new App\Bootstrap;
 $bootstrap->boot()
     ->createContainer()

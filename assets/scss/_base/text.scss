@@ -1,0 +1,59 @@
+@use '../_autoload' as *;
+
+// text sizes
+.text-base {font-size: $font-size-base;}
+.text-sm {font-size: $font-size-sm;}
+.text-lg {font-size: $font-size-lg;}
+
+// muted text
+.text-muted {color: $color-secondary;}
+
+// text align
+.text-start {text-align: left !important;}
+.text-end {text-align: right !important;}
+.text-center {text-align: center !important;}
+
+// text color
+.text-primary {color: $color-primary;}
+.text-secondary {color: $color-secondary;}
+.text-success {color: $color-success;}
+.text-danger {color: $color-danger;}
+.text-warning {color: $color-warning;}
+
+
+// heading
+h1, .h1 {
+    margin-bottom: $m-1;
+    line-height: 1.2;
+    color: $color-primary;
+    font-size: clamp(2.75rem, 7vw, 3.25rem);
+    font-weight: $font-weight-bold;
+}
+h2, .h2 {
+    margin-bottom: $m-1;
+    line-height: 1.2;
+    color: $color-primary;
+    font-size: clamp(2rem, 6vw, 2.25rem);
+    font-weight: $font-weight-bold;
+}
+h3, .h3 {
+    margin-bottom: $m-1;
+    line-height: 1.2;
+    color: $color-primary;
+    font-size: clamp(1.5rem, 4.25vw, 1.75rem);
+    font-weight: $font-weight-bold;
+}
+h4, .h4 {
+    margin-bottom: $m-1;
+    line-height: 1.2;
+    color: $color-base;
+    font-size: clamp(1.25rem, 3.5vw, 1.5rem);
+    font-weight: $font-weight-bold;
+}
+h5, .h5 {
+    margin-bottom: $m-1;
+    line-height: 1.2;
+    color: $color-base;
+    font-size: clamp(1rem, 1rem, 1.25rem);
+    font-weight: $font-weight-bold;
+}

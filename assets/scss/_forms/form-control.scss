@@ -1,0 +1,213 @@
+@use '../_autoload' as *;
+
+//
+// General form controls (plus a few specific high-level interventions)
+//
+
+.form-control {
+    display: block;
+    width: 100%;
+    padding: .375rem .75rem;
+    font-size: $font-size-base;
+    font-weight: $font-weight-normal;
+    line-height: $line-height-base;
+    color: $color-base;
+    appearance: none; // Fix appearance for date inputs in Safari
+    background-color: $form-input-bg;
+    background-clip: padding-box;
+    border: $form-border-width solid $form-border-color;
+
+    // Note: This has no effect on <select>s in some browsers, due to the limited stylability of `<select>`s in CSS.
+    border-radius: $border-radius;
+
+    box-shadow: $box-shadow-inset;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+
+    &[type="file"] {
+        overflow: hidden; // prevent pseudo element button overlap
+
+        &:not(:disabled):not([readonly]) {
+            cursor: pointer;
+        }
+    }
+
+    // Customize the `:focus` state to imitate native WebKit styles.
+    &:focus {
+        color: $color-base;
+        background-color: $form-input-bg;
+        border-color: tint-color($color-primary, 50%);
+        outline: 0;
+        box-shadow: $focus-ring-box-shadow;
+    }
+
+    &::-webkit-date-and-time-value {
+        // On Android Chrome, form-control's "width: 100%" makes the input width too small
+        // Tested under Android 11 / Chrome 89, Android 12 / Chrome 100, Android 13 / Chrome 109
+        //
+        // On iOS Safari, form-control's "appearance: none" + "width: 100%" makes the input width too small
+        // Tested under iOS 16.2 / Safari 16.2
+        min-width: 85px; // Seems to be a good minimum safe width
+
+        // Add some height to date inputs on iOS
+        // https://github.com/twbs/bootstrap/issues/23307
+        // TODO: we can remove this workaround once https://bugs.webkit.org/show_bug.cgi?id=198959 is resolved
+        // Multiply line-height by 1em if it has no unit
+        height: $line-height-base;
+
+        // Android Chrome type="date" is taller than the other inputs
+        // because of "margin: 1px 24px 1px 4px" inside the shadow DOM
+        // Tested under Android 11 / Chrome 89, Android 12 / Chrome 100, Android 13 / Chrome 109
+        margin: 0;
+    }
+
+    // Prevent excessive date input height in Webkit
+    // https://github.com/twbs/bootstrap/issues/34433
+    &::-webkit-datetime-edit {
+        display: block;
+        padding: 0;
+    }
+
+    // Placeholder
+    &::placeholder {
+        color: $color-secondary;
+        font-size: .9em;
+        // Override Firefox's unusual default opacity; see https://github.com/twbs/bootstrap/pull/11526.
+        opacity: 1;
+    }
+
+    // Disabled inputs
+    //
+    // HTML5 says that controls under a fieldset > legend:first-child won't be
+    // disabled if the fieldset is disabled. Due to implementation difficulty, we
+    // don't honor that edge case; we style them as disabled anyway.
+    &:disabled {
+        cursor: not-allowed;
+        color: #666;
+        background: #f2f2f2;
+    }
+
+    // File input buttons theming
+    &::file-selector-button {
+        padding: .375rem .75rem;
+        margin: -0.375rem -0.75rem;
+        margin-inline-end: .75rem;
+        color: $color-base;
+        background-color: $form-bg-secondary;
+        pointer-events: none;
+        border-color: inherit;
+        border-style: solid;
+        border-width: 0;
+        border-inline-end-width: $form-border-width;
+        border-radius: 0; // stylelint-disable-line property-disallowed-list
+        transition:
+                color .15s ease-in-out,
+                background-color .15s ease-in-out,
+                border-color .15s ease-in-out,
+                box-shadow .15s ease-in-out;
+    }
+
+    &:hover:not(:disabled):not([readonly])::file-selector-button {
+        background-color: #6c757d;
+    }
+}
+
+// Readonly controls as plain text
+//
+// Apply class to a readonly input to make it appear like regular plain
+// text (without any border, background color, focus indicator)
+
+.form-control-plaintext {
+    display: block;
+    width: 100%;
+    padding: .375rem 0;
+    margin-bottom: 0; // match inputs if this class comes on inputs with default margins
+    line-height: $line-height-base;
+    color: $color-base;
+    background-color: transparent;
+    border: solid transparent;
+    border-width: $form-border-width 0;
+
+    &:focus {
+        outline: 0;
+    }
+
+    &.form-control-sm,
+    &.form-control-lg {
+        padding-right: 0;
+        padding-left: 0;
+    }
+}
+
+// Form control sizing
+//
+// Build on `.form-control` with modifier classes to decrease or increase the
+// height and font-size of form controls.
+//
+// Repeated in `_input_group.scss` to avoid Sass extend issues.
+
+.form-control-sm {
+    min-height: calc(($line-height-base * 1em) + .5rem + 2px);
+    padding: .25rem .5rem;
+    font-size: $font-size-sm;
+    border-radius: $border-radius-sm;
+
+    &::file-selector-button {
+        padding: .25rem .5rem;
+        margin: -0.25rem -0.5rem;
+        margin-inline-end: .5rem;
+    }
+}
+
+.form-control-lg {
+    min-height: calc(($line-height-base * 1em) + 1rem + 2px);
+    padding: .5rem 1rem;
+    font-size: $font-size-lg;
+    border-radius: $border-radius-lg;
+
+    &::file-selector-button {
+        padding: .5rem 1rem;
+        margin: -0.5rem -1rem;
+        margin-inline-end: 1rem;
+    }
+}
+
+// Make sure textareas don't shrink too much when resized
+// https://github.com/twbs/bootstrap/pull/29124
+// stylelint-disable selector-no-qualifying-type
+textarea {
+    &.form-control {
+        min-height: calc(($line-height-base * 1em) + .75rem + 2px);
+    }
+
+    &.form-control-sm {
+        min-height: calc(($line-height-base * 1em) + .5rem + 2px);
+    }
+
+    &.form-control-lg {
+        min-height: calc(($line-height-base * 1em) + 1rem + 2px);
+    }
+}
+// stylelint-enable selector-no-qualifying-type
+
+.form-control-color {
+    width: 3rem;
+    height: calc(($line-height-base * 1em) + .75rem + 2px);
+    padding: .375rem;
+
+    &:not(:disabled):not([readonly]) {
+        cursor: pointer;
+    }
+
+    &::-moz-color-swatch {
+        border: 0 !important; // stylelint-disable-line declaration-no-important
+        border-radius: $border-radius;
+    }
+
+    &::-webkit-color-swatch {
+        border: 0 !important; // stylelint-disable-line declaration-no-important
+        border-radius: $border-radius;
+    }
+
+    &.form-control-sm { height: calc(($line-height-base * 1em) + .5rem + 2px); }
+    &.form-control-lg { height: calc(($line-height-base * 1em) +  1rem + 2px); }
+}

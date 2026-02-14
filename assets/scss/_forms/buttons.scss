@@ -1,0 +1,365 @@
+@use 'sass:color';
+@use '../_autoload' as *;
+
+//
+// Tlacitka
+//
+$btn-border-width: 1px;
+$btn-border-color: transparent;
+
+$btn-padding-y: .375rem;
+$btn-padding-x: .75rem;
+$btn-color: $color-base;
+$btn-font-size: $font-size-base;
+$btn-border-radius: 60px;
+
+$btn-padding-y-sm: .25rem;
+$btn-padding-x-sm: .5rem;
+$btn-font-size-sm: $font-size-sm;
+$btn-border-radius-sm: $border-radius-sm;
+
+$btn-padding-y-lg: .5rem;
+$btn-padding-x-lg: 1rem;
+$btn-font-size-lg: $font-size-lg;
+$btn-border-radius-lg: 60px;
+
+
+.btn {
+    --btn-padding-x: #{$btn-padding-x};
+    --btn-padding-y: #{$btn-padding-y};
+    --btn-color: #{$btn-color};
+    --btn-font-size: #{$btn-font-size};
+    --btn-border-radius: #{$btn-border-radius};
+
+    display: inline-flex;
+    align-items: center;
+    padding: var(--btn-padding-y) var(--btn-padding-x);
+    font-size: var(--btn-font-size);
+    font-weight: $font-weight-normal;
+    line-height: $line-height-base;
+    color: var(--btn-color);
+    text-align: center;
+    text-decoration: if($link-decoration == none, null, none);
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    border: $btn-border-width solid var(--btn-border-color);
+    border-radius: var(--btn-border-radius);
+    background-color: var(--btn-bg);
+    box-shadow: inset 0 1px 0 rgba(#fff, .15), 0 1px 1px rgba(#000, .075);
+    transition:
+        color .15s ease-in-out,
+        background-color .15s ease-in-out,
+        border-color .15s ease-in-out,
+        box-shadow .15s ease-in-out;
+
+    &:hover {
+        color: var(--btn-hover-color);
+        text-decoration: if($link-hover-decoration == underline, none, null);
+        background-color: var(--btn-hover-bg);
+        border-color: var(--btn-hover-border-color);
+    }
+
+    .btn-check + &:hover {
+        // override for the checkbox/radio buttons
+        color: var(--btn-hover-color);
+        background-color: var(--btn-color);
+        border-color: $btn-border-color;
+    }
+
+    &:focus-visible {
+        color: var(--btn-hover-color);
+        background-color: var(--btn-hover-bg);
+        border-color: var(--btn-hover-border-color);
+        outline: 0;
+        // Avoid using mixin so we can pass custom focus shadow properly
+        box-shadow: var(--btn-focus-box-shadow);
+    }
+
+    .btn-check:focus-visible + & {
+        border-color: var(--btn-hover-border-color);
+        outline: 0;
+        // Avoid using mixin so we can pass custom focus shadow properly
+        box-shadow: var(--btn-focus-box-shadow);
+    }
+
+    .btn-check:checked + &,
+    :not(.btn-check) + &:active,
+    &:first-child:active,
+    &.active,
+    &.show {
+        color: var(--btn-hover-color);
+        background-color: var(--btn-hover-bg);
+        // Remove CSS gradients if they're enabled
+        background-image: none;
+        border-color: var(--btn-hover-border-color);
+
+        &:focus-visible {
+            // Avoid using mixin so we can pass custom focus shadow properly
+            box-shadow: var(--btn-focus-box-shadow);
+        }
+    }
+
+    .btn-check:checked:focus-visible + & {
+        // Avoid using mixin so we can pass custom focus shadow properly
+        box-shadow: var(--btn-focus-box-shadow);
+    }
+
+    &:disabled,
+    &.disabled,
+    fieldset:disabled & {
+        position: relative;
+        color: var(--btn-color);
+        pointer-events: none;
+        background-color: var(--btn-disabled-bg);
+        border-color: var(--btn-disabled-border-color);
+        opacity: .65;
+        box-shadow: none;
+    }
+}
+
+
+//
+// Alternate buttons
+//
+
+.btn-primary {
+    --btn-color: #fff;
+    --btn-bg: #{$color-primary};
+    --btn-border-color: #{$color-primary};
+    --btn-hover-color: #fff;
+    --btn-hover-bg: #{color.mix(black, $color-primary, 25%)};
+    --btn-hover-border-color: #{$color-primary};
+    --btn-focus-box-shadow: 0 0 0 .25rem rgba(to-rgb($color-primary), .5);
+    --btn-disabled-bg: #{$color-primary};
+    --btn-disabled-border-color: #{$color-primary};
+}
+.btn-secondary {
+    --btn-color: #fff;
+    --btn-bg: #{$color-secondary};
+    --btn-border-color: #{$color-secondary};
+    --btn-hover-color: #fff;
+    --btn-hover-bg: #{color.mix(black, $color-secondary, 25%)};
+    --btn-hover-border-color: #{$color-secondary};
+    --btn-focus-box-shadow: 0 0 0 .25rem rgba(to-rgb($color-secondary), .5);
+    --btn-disabled-bg: #{$color-secondary};
+    --btn-disabled-border-color: #{$color-secondary};
+}
+.btn-success {
+    --btn-color: #fff;
+    --btn-bg: #{$color-success};
+    --btn-border-color: #{$color-success};
+    --btn-hover-color: #fff;
+    --btn-hover-bg: #{color.mix(black, $color-success, 25%)};
+    --btn-hover-border-color: #{$color-success};
+    --btn-focus-box-shadow: 0 0 0 .25rem rgba(to-rgb($color-success), .5);
+    --btn-disabled-bg: #{$color-success};
+    --btn-disabled-border-color: #{$color-success};
+}
+.btn-danger {
+    --btn-color: #fff;
+    --btn-bg: #{$color-danger};
+    --btn-border-color: #{$color-danger};
+    --btn-hover-color: #fff;
+    --btn-hover-bg: #{color.mix(black, $color-danger, 25%)};
+    --btn-hover-border-color: #{$color-danger};
+    --btn-focus-box-shadow: 0 0 0 .25rem rgba(to-rgb($color-danger), .5);
+    --btn-disabled-bg: #{$color-danger};
+    --btn-disabled-border-color: #{$color-danger};
+}
+.btn-warning {
+    --btn-color: $color-base;
+    --btn-bg: #{$color-warning};
+    --btn-border-color: #{$color-warning};
+    --btn-hover-color: $color-base;
+    --btn-hover-bg: #{color.mix(white, $color-warning, 25%)};
+    --btn-hover-border-color: #{$color-warning};
+    --btn-focus-box-shadow: 0 0 0 .25rem rgba(to-rgb($color-warning), .5);
+    --btn-disabled-bg: #{$color-warning};
+    --btn-disabled-border-color: #{$color-warning};
+}
+
+
+//
+// Outline buttons
+//
+
+.btn-outline-primary {
+    --btn-color: #{$color-primary};
+    --btn-border-color: #{$color-primary};
+    --btn-hover-color: #fff;
+    --btn-hover-border-color: #{$color-primary};
+    --btn-hover-bg: #{$color-primary};
+}
+.btn-outline-secondary {
+    --btn-color: #{$color-secondary};
+    --btn-border-color: #{$color-secondary};
+    --btn-hover-color: #fff;
+    --btn-hover-border-color: #{$color-secondary};
+    --btn-hover-bg: #{$color-secondary};
+}
+.btn-outline-success {
+    --btn-color: #{$color-success};
+    --btn-border-color: #{$color-success};
+    --btn-hover-color: #fff;
+    --btn-hover-border-color: #{$color-success};
+    --btn-hover-bg: #{$color-success};
+}
+.btn-outline-danger {
+    --btn-color: #{$color-danger};
+    --btn-border-color: #{$color-danger};
+    --btn-hover-color: #fff;
+    --btn-hover-border-color: #{$color-danger};
+    --btn-hover-bg: #{$color-danger};
+}
+.btn-outline-warning {
+    --btn-color: #{$color-warning};
+    --btn-border-color: #{$color-warning};
+    --btn-hover-color: #{$color-base};
+    --btn-hover-border-color: #{$color-warning};
+    --btn-hover-bg: #{$color-warning};
+}
+
+
+//
+// Button Sizes
+//
+.btn-sm {
+    --btn-padding-y: #{$btn-padding-y-sm};
+    --btn-padding-x: #{$btn-padding-x-sm};
+    --btn-font-size: #{$btn-font-size-sm};
+    --btn-border-radius: #{$btn-border-radius-sm};
+}
+.btn-lg {
+    --btn-padding-y: .5rem;
+    --btn-padding-x: 1rem;
+    --btn-font-size: $font-size-lg;
+    --btn-border-radius: #{$btn-border-radius-lg};
+}
+
+
+//
+// Button with icon
+//
+.btn .icon {
+    margin-right: .5em;
+}
+
+
+
+
+
+
+
+
+// Make the div behave like a button
+.btn-group,
+.btn-group-vertical {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle; // match .btn alignment given font-size hack above
+
+    > .btn {
+        position: relative;
+        flex: 1 1 auto;
+    }
+
+    // Bring the hover, focused, and "active" buttons to the front to overlay
+    // the borders properly
+    > .btn-check:checked + .btn,
+    > .btn-check:focus + .btn,
+    > .btn:hover,
+    > .btn:focus,
+    > .btn:active,
+    > .btn.active {
+        z-index: 1;
+    }
+}
+
+// Optional: Group multiple button groups together for a toolbar
+.btn-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+
+    .input-group {
+        width: auto;
+    }
+}
+
+.btn-group {
+
+    // Prevent double borders when buttons are next to each other
+    > :not(.btn-check:first-child) + .btn,
+    > .btn-group:not(:first-child) {
+        margin-left: calc(1px * -1); // stylelint-disable-line function-disallowed-list
+    }
+
+    // Reset rounded corners
+    > .btn:not(:last-child):not(.dropdown-toggle),
+    > .btn.dropdown-toggle-split:first-child,
+    > .btn-group:not(:last-child) > .btn {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    // The left radius should be 0 if the button is:
+    // - the "third or more" child
+    // - the second child and the previous element isn't `.btn-check` (making it the first child visually)
+    // - part of a btn-group which isn't the first child
+    > .btn:nth-child(n + 3),
+    > :not(.btn-check) + .btn,
+    > .btn-group:not(:first-child) > .btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+}
+
+// Sizing
+//
+// Remix the default button sizing classes into new ones for easier manipulation.
+
+// .btn-group-sm > .btn { @extend .btn-sm; }
+// .btn-group-lg > .btn { @extend .btn-lg; }
+
+
+//
+// Split button dropdowns
+//
+
+.dropdown-toggle-split {
+    padding-right: $btn-padding-x * .75;
+    padding-left: $btn-padding-x * .75;
+
+    &::after,
+    .dropup &::after,
+    .dropend &::after {
+        margin-left: 0;
+    }
+
+    .dropstart &::before {
+        margin-right: 0;
+    }
+}
+
+.btn-sm + .dropdown-toggle-split {
+    padding-right: $btn-padding-x-sm * .75;
+    padding-left: $btn-padding-x-sm * .75;
+}
+
+.btn-lg + .dropdown-toggle-split {
+    padding-right: $btn-padding-x-lg * .75;
+    padding-left: $btn-padding-x-lg * .75;
+}
+
+
+// The clickable button for toggling the menu
+// Set the same inset shadow as the :active state
+.btn-group.show .dropdown-toggle {
+//    @include box-shadow($btn-active-box-shadow);
+
+    // Show no shadow for `.btn-link` since it has no other button styles.
+    &.btn-link {
+//        @include box-shadow(none);
+    }
+}

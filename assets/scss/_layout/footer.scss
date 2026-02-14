@@ -1,0 +1,31 @@
+@use '../_autoload' as *;
+
+
+footer {
+    padding-block: $p-1;
+    color: $color-base;
+    font-size: 0.9rem;
+    text-align: center;
+    background: #ddd;
+
+    .container {
+    }
+}
+
+
+@include media-breakpoint-up(md) {
+    footer {
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .footer__menu {
+        display: flex;
+        gap: $spacer;
+    }
+}

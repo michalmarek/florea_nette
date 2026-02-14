@@ -1,0 +1,65 @@
+@use '../_autoload' as *;
+
+
+/*
+sm: 576px,
+md: 768px,
+lg: 992px,
+xl: 1200px
+*/
+.container {
+    max-width: 1360px;
+    margin: 0 auto;
+    padding-inline: $p-1;
+}
+
+
+//
+// Grid
+// style="--gap:3rem;" - definice vlastni sirky mezery
+//
+.row {
+    --gap: 1rem;
+
+    display: grid;
+    gap: var(--gap);
+}
+
+.gap-0 {
+    --gap: 0;
+}
+
+.row-cols-2 {grid-template-columns: repeat(2, 1fr);}
+.row-cols-3 {grid-template-columns: repeat(3, 1fr);}
+.row-cols-4 {grid-template-columns: repeat(4, 1fr);}
+.row-cols-5 {grid-template-columns: repeat(5, 1fr);}
+.row-cols-6 {grid-template-columns: repeat(6, 1fr);}
+
+@include media-breakpoint-up(sm) {
+    .row-cols-sm-2 {grid-template-columns: repeat(2, 1fr);}
+    .row-cols-sm-3 {grid-template-columns: repeat(3, 1fr);}
+    .row-cols-sm-4 {grid-template-columns: repeat(4, 1fr);}
+    .row-cols-sm-5 {grid-template-columns: repeat(5, 1fr);}
+    .row-cols-sm-6 {grid-template-columns: repeat(6, 1fr);}
+}
+@include media-breakpoint-up(md) {
+    .row-cols-md-2 {grid-template-columns: repeat(2, 1fr);}
+    .row-cols-md-3 {grid-template-columns: repeat(3, 1fr);}
+    .row-cols-md-4 {grid-template-columns: repeat(4, 1fr);}
+    .row-cols-md-5 {grid-template-columns: repeat(5, 1fr);}
+    .row-cols-md-6 {grid-template-columns: repeat(6, 1fr);}
+}
+@include media-breakpoint-up(lg) {
+    .row-cols-lg-2 {grid-template-columns: repeat(2, 1fr);}
+    .row-cols-lg-3 {grid-template-columns: repeat(3, 1fr);}
+    .row-cols-lg-4 {grid-template-columns: repeat(4, 1fr);}
+    .row-cols-lg-5 {grid-template-columns: repeat(5, 1fr);}
+    .row-cols-lg-6 {grid-template-columns: repeat(6, 1fr);}
+}
+@include media-breakpoint-up(xl) {
+    .row-cols-xl-2 {grid-template-columns: repeat(2, 1fr);}
+    .row-cols-xl-3 {grid-template-columns: repeat(3, 1fr);}
+    .row-cols-xl-4 {grid-template-columns: repeat(4, 1fr);}
+    .row-cols-xl-5 {grid-template-columns: repeat(5, 1fr);}
+    .row-cols-xl-6 {grid-template-columns: repeat(6, 1fr);}
+}

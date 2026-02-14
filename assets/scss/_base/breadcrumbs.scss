@@ -1,0 +1,41 @@
+@use 'sass:string';
+@use '../_autoload' as *;
+
+//
+// Breadcrumbs
+//
+
+.breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 0;
+    margin-bottom: $m-1;
+    color: $color-secondary;
+    font-size: $font-size-sm;
+    list-style: none;
+}
+
+.breadcrumbs-item {
+
+    .icon {
+        vertical-align: middle;
+        color: $color-base;
+    }
+
+    // The separator between breadcrumbs (by default, a forward-slash: "/")
+    + .breadcrumbs-item {
+        padding-left: .75rem;
+
+        &::before {
+            float: left; // Suppress inline spacings and underlining of the separator
+            padding-right: .75rem;
+            color: tint-color($color-secondary, 50%);
+            content: var(--breadcrumbs-divider, string.quote("/"));
+        }
+    }
+
+    &.active {
+        color: $color-base;
+    }
+}

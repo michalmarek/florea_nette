@@ -1,0 +1,64 @@
+@use '../_autoload' as *;
+
+// Select
+//
+// Replaces the browser default select with a custom one, mostly pulled from
+// https://primer.github.io/.
+
+.form-select {
+    display: block;
+    width: 100%;
+    padding: .375rem (.75rem * 3) .375rem .75rem;
+    font-size: $font-size-base;
+    font-weight: $font-weight-normal;
+    line-height: $line-height-base;
+    color: $color-base;
+    appearance: none;
+    background-color: $form-input-bg;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='#000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right .75rem center;
+    background-size: 16px 12px;
+    border: $form-border-width solid $form-border-color;
+    border-radius: 60px;
+    box-shadow: $box-shadow-inset;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+
+    &:focus {
+        border-color: tint-color($color-primary, 50%);
+        outline: 0;
+        box-shadow: $focus-ring-box-shadow;
+    }
+
+    &[multiple],
+    &[size]:not([size="1"]) {
+        padding-right: .75rem;
+        background-image: none;
+    }
+
+    &:disabled {
+        background-color: #6c757d;
+    }
+
+    // Remove outline from select box in FF
+    &:-moz-focusring {
+        color: transparent;
+        text-shadow: 0 0 0 #000;
+    }
+}
+
+.form-select-sm {
+    padding-top: .25rem;
+    padding-bottom: .25rem;
+    padding-left: .5rem;
+    font-size: $font-size-sm;
+    border-radius: $border-radius-sm;
+}
+
+.form-select-lg {
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+    padding-left: 1rem;
+    font-size: $font-size-lg;
+    border-radius: $border-radius-sm;
+}

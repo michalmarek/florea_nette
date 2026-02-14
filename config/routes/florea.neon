@@ -1,0 +1,75 @@
+# Routes for florea.cz shop
+
+routes:
+    # === HOMEPAGE ===
+    - mask: ''
+      presenter: Home
+      action: default
+
+    # === PRODUKTY ===
+    - mask: 'produkt/<id \d+>'
+      presenter: Product
+      action: detail
+
+    # === KATEGORIE ===
+    - mask: 'produkty/<slug>'
+      presenter: Category
+      action: default
+
+    # === KOŠÍK ===
+    # Košík používá handlery - všechny akce (add, remove, update...)
+    # jsou handle* metody volané přes AJAX nebo redirect
+    - mask: 'kosik'
+      presenter: Cart
+      action: default
+
+    # === OBJEDNÁVKA ===
+    - mask: 'objednavka'
+      presenter: Checkout
+      action: default
+
+    # === AUTH ===
+    - mask: 'prihlaseni'
+      presenter: Auth
+      action: login
+
+    - mask: 'odhlaseni'
+      presenter: Auth
+      action: logout
+
+    - mask: 'registrace'
+      presenter: Auth
+      action: register
+
+    - mask: 'ztracene-heslo'
+      presenter: Auth
+      action: forgotPassword
+
+    - mask: 'reset-hesla'
+      presenter: Auth
+      action: resetPassword
+
+    # === ACCOUNT (Můj účet) ===
+    - mask: 'muj-ucet'
+      presenter: Account
+      action: profile
+
+    - mask: 'muj-ucet/upravit'
+      presenter: Account
+      action: edit
+
+    - mask: 'muj-ucet/zmenit-heslo'
+      presenter: Account
+      action: changePassword
+
+    - mask: 'muj-ucet/adresy'
+      presenter: Account
+      action: addresses
+
+    # Address CRUD používá handlery (add, edit, delete, setDefault)
+    # Bez explicitních routes - volají se přes n:href="delete! $address->id"
+
+    # === FALLBACK (musí být poslední!) ===
+    - mask: '<presenter>/<action>[/<id>]'
+      presenter: Home
+      action: default

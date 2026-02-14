@@ -1,0 +1,38 @@
+@use '../_autoload' as *;
+
+
+$btn-close-color: #000;
+
+.btn-close {
+    --btn-close-color: #{$btn-close-color};
+
+    box-sizing: content-box;
+    width: 1em;
+    height: 1em;
+    padding: .25em;
+    color: var(--btn-close-color);
+    background: transparent url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{$btn-close-color}'><path d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/></svg>") center / 1em auto no-repeat; // include transparent for button elements
+    border: 0; // for button elements
+    border-radius: $border-radius;
+    opacity: .5;
+
+    // Override <a>'s hover style
+    &:hover {
+        color: var(--btn-close-color);
+        text-decoration: none;
+        opacity: 1;
+    }
+
+    &:focus {
+        outline: 0;
+        box-shadow: 0 0 0 .25rem rgba($color-primary, .25);
+        opacity: 1;
+    }
+
+    &:disabled,
+    &.disabled {
+        pointer-events: none;
+        user-select: none;
+        opacity: .25;
+    }
+}

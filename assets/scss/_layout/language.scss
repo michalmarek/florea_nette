@@ -1,0 +1,110 @@
+@use 'sass:math';
+@use '../_autoload' as *;
+
+
+.language {
+}
+.language__link {
+  position: relative;
+  color: #585858;
+  text-decoration: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 2px;
+    width: 0;
+    height: 1px;
+    background-color: currentColor;
+    transform: translateX(-50%);
+    transition: width 0.2s ease;
+  }
+}
+.language__link:hover {
+  &::after {
+    width: 100%;
+  }
+}
+.language__link.active {
+  pointer-events: none;
+
+  &::after {
+    width: 100%;
+  }
+}
+
+
+// jazyky - mobil
+//
+.language--mobile {
+  display: flex;
+
+  .language__item {
+    flex-grow: 1;
+  }
+  .language__link {
+    display: block;
+    padding: math.div($spacer, 2) 0;
+    color: #fff;
+    text-align: center;
+  }
+  .language__link.active {
+    border: 1px solid #fff;
+
+    &::after {
+      display: none;
+    }
+  }
+}
+
+
+// jazyky - hlavička
+//
+.language.language--header {
+  display: flex;
+  gap: $spacer;
+}
+
+
+@include media-breakpoint-up(md) {
+  .header--homepage {
+    .language__link {
+      color: #fff;
+      text-shadow: 0 2px 0 rgba(0,0,0, .2);
+
+      &::after {
+        box-shadow: 0 2px 0 rgba(0,0,0, .2);
+      }
+    }
+  }
+}
+
+
+// jazyky - patička
+//
+.language--footer {
+  display: flex;
+  justify-content: center;
+  gap: $spacer;
+  margin: 0 auto;
+  border-bottom: 1px dotted #585858;
+
+  .language__link {
+    display: inline-block;
+    padding: math.div($spacer, 2) 0;
+    font-weight: bold;
+    text-align: center;
+
+    &::after {
+      bottom: math.div($spacer, 2);
+    }
+  }
+}
+
+@include media-breakpoint-up(md) {
+  .language--footer {
+    justify-content: flex-start;
+    border: none;
+  }
+}

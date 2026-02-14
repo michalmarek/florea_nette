@@ -1,0 +1,30 @@
+{
+  "name": "muj-projekt",
+  "version": "1.0.0",
+  "description": "PHP projekt s Gulp build systémem - hashuje všechny assety",
+  "private": true,
+  "scripts": {
+    "dev": "gulp dev",
+    "build": "gulp build",
+    "watch": "gulp watch",
+    "clean": "gulp clean"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^3.0.4",
+    "del": "^8.0",
+    "gulp": "^5.0",
+    "gulp-autoprefixer": "^10.0.0",
+    "gulp-cssnano": "^2.1.3",
+    "gulp-rev": "^11.0.0",
+    "gulp-sass": "^6.0",
+    "gulp-svg-sprite": "^2.0.3",
+    "gulp-terser": "^2.1.0",
+    "sass": "^1.93.2"
+  },
+  "dependencies": {
+    "modern-normalize": "^3.0.1"
+  }
+}

@@ -1,0 +1,100 @@
+@use '../_autoload' as *;
+
+//
+// Pagination
+//
+
+.pagination {
+    --pagination-padding-x: .75rem;
+    --pagination-padding-y: .375rem;
+    --pagination-font-size: $font-size-base;
+    --pagination-border-radius: $border-radius;
+
+    display: flex;
+}
+
+.page-link {
+    position: relative;
+    display: block;
+    padding: var(--pagination-padding-y) var(--pagination-padding-x);
+    font-size: $font-size-base;
+    color: $color-primary;
+    text-decoration: if($link-decoration == none, null, none);
+    border: 1px solid $border-color;
+    transition:
+        color .15s ease-in-out,
+        background-color .15s ease-in-out,
+        border-color .15s ease-in-out,
+        box-shadow .15s ease-in-out;
+
+    &:hover {
+        z-index: 2;
+        color: shade-color($color-primary, 20%);
+        text-decoration: if($link-hover-decoration == underline, none, null);
+        background-color: $border-color;
+    }
+
+    &:focus {
+        z-index: 3;
+        color: $color-primary;
+        background-color: #fff;
+        outline: 0;
+        box-shadow: $focus-ring-box-shadow;
+    }
+
+    &.active,
+    .active > & {
+        z-index: 3;
+        color: #fff;
+        pointer-events: none;
+        background-color: $color-primary;
+        border-color: $border-color;
+    }
+
+    &.disabled,
+    .disabled > & {
+        color: $color-secondary;
+        pointer-events: none;
+        background-color: $border-color;
+        border-color: $border-color;
+    }
+}
+
+.page-item {
+    &:not(:first-child) .page-link {
+        margin-left: -1px;
+    }
+
+    &:first-child {
+        .page-link {
+            border-top-left-radius: $border-radius;
+            border-bottom-left-radius: $border-radius;
+        }
+    }
+
+    &:last-child {
+        .page-link {
+            border-top-right-radius: $border-radius;
+            border-bottom-right-radius: $border-radius;
+        }
+    }
+}
+
+
+//
+// Sizing
+//
+
+.pagination-lg {
+    --pagination-padding-x: 1.5rem;
+    --pagination-padding-y: .75rem;
+    --pagination-font-size: $font-size-lg;
+    --pagination-border-radius: $border-radius-lg;
+}
+
+.pagination-sm {
+    --pagination-padding-x: .5rem;
+    --pagination-padding-y: .25rem;
+    --pagination-font-size: $font-size-sm;
+    --pagination-border-radius: $border-radius-sm;
+}

@@ -10,6 +10,7 @@ parameters:
         # Development
         localhost: florea
         www.florea2.local: florea
+        www.florea3.local: florea
 
         # Satellite shop - Velké Vence
         velke-vence.cz: velke-vence

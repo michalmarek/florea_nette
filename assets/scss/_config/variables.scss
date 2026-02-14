@@ -1,0 +1,109 @@
+@use 'sass:map';
+
+$color-base:                  #212529 !default;
+$color-base-bg:               #ffffff !default;
+$color-primary:               #a04f89 !default;
+$color-secondary:             #c69c4e !default;
+$color-success:               #198754 !default;
+$color-danger:                #dc3545 !default;
+$color-warning:               #ffc107 !default;
+
+$spacer:                      1rem !default;
+$spacers: (
+        0: 0,
+        1: $spacer,
+        "sm": $spacer * .5,
+        "lg": $spacer * 3,
+) !default;
+
+$m-0: 0;
+$m-1: map.get($spacers, 1);
+$m-sm: map.get($spacers, "sm");
+$m-lg: map.get($spacers, "lg");
+
+$p-0: 0;
+$p-1: map.get($spacers, 1);
+$p-sm: map.get($spacers, "sm");
+$p-lg: map.get($spacers, "lg");
+
+
+// sm = mobil
+// md = tablet
+// lg = desktop
+// xl = maxi desktop
+$breakpoints: (
+        sm: 576px,
+        md: 768px,
+        lg: 992px,
+        xl: 1200px,
+        xxl: 1360px
+);
+
+$aspect-ratios: (
+        "1x1": 100%,
+        "4x3": calc(3 / 4 * 100%),
+        "16x9": calc(9 / 16 * 100%),
+        "21x9": calc(9 / 21 * 100%)
+) !default;
+
+$transition-base:             all .2s ease-in-out !default;
+$transition-fade:             opacity .15s linear !default;
+$transition-collapse:         height .35s ease !default;
+$transition-collapse-width:   width .35s ease !default;
+
+$zindex-dropdown:             1000 !default;
+$zindex-sticky:               1020 !default;
+$zindex-fixed:                1030 !default;
+$zindex-modal-backdrop:       1050 !default;
+$zindex-modal:                1055 !default;
+$zindex-tooltip:              1080 !default;
+
+$border-radius:               0rem !default;
+$border-radius-sm:            .25rem !default;
+$border-radius-lg:            .5rem !default;
+
+$link-color:                  $color-primary !default;
+$link-decoration:             underline !default;
+$link-hover-color:            shift-color($link-color, 50%) !default;
+$link-hover-decoration:       null !default;
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+$font-family-base:            "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+
+$font-size-root:              null !default;
+$font-size-base:              1rem !default; // Assumes the browser default, typically `16px`
+$font-size-sm:                $font-size-base * .875 !default;
+$font-size-lg:                $font-size-base * 1.25 !default;
+
+$font-weight-lighter:         lighter !default;
+$font-weight-light:           300 !default;
+$font-weight-normal:          400 !default;
+$font-weight-medium:          500 !default;
+$font-weight-semibold:        600 !default;
+$font-weight-bold:            700 !default;
+$font-weight-bolder:          bolder !default;
+
+$line-height-base:            1.8 !default;
+$line-height-sm:              1.25 !default;
+$line-height-lg:              2 !default;
+
+$border-color:                #dee2e6 !default;
+
+$box-shadow:                  0 .5rem 1rem rgba(#000, .15) !default;
+$box-shadow-sm:               0 .125rem .25rem rgba(#000, .075) !default;
+$box-shadow-lg:               0 1rem 3rem rgba(#000, .175) !default;
+$box-shadow-inset:            inset 0 1px 2px rgba(#000, .075) !default;
+
+$focus-ring-box-shadow:       0 0 0 .25rem rgba($color-primary, .25) !default;
+
+$backdrop-opacity:            .7 !default;
+$backdrop-bg:                 #000 !default;
+
+$caret-img:                   url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='#000000' stroke-linecap='round' stroke-linejoin='round'><path d='M2 5L8 11L14 5'/></svg>");
+$caret-img-white:             url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='#FFFFFF' stroke-linecap='round' stroke-linejoin='round'><path d='M2 5L8 11L14 5'/></svg>");
+
+// forms
+$form-border-width:      1px !default;
+$form-border-color:      $border-color !default;
+$form-input-bg:          #fff !default;
+$form-bg-secondary:      #f8f9fa !default;
