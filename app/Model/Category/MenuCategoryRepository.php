@@ -4,6 +4,8 @@ namespace App\Model\Category;
 
 use Nette\Database\Explorer;
 use Nette\Database\Table\Selection;
+use Nette\Caching\Cache;
+use Nette\Caching\Storage;
 
 /**
  * MenuCategoryRepository
@@ -15,9 +17,14 @@ use Nette\Database\Table\Selection;
  */
 class MenuCategoryRepository
 {
+    private Cache $cache;
+
     public function __construct(
         private Explorer $database,
-    ) {}
+        Storage $cacheStorage,
+    ) {
+        $this->cache = new Cache($cacheStorage, 'MenuCategory');
+    }
 
     /**
      * Find menu category by ID
@@ -179,6 +186,59 @@ class MenuCategoryRepository
         }
 
         return $breadcrumbs;
+    }
+
+    /**
+     * Get menu tree for shop (max 2 levels, cached)
+     *
+     * @return array [{category: MenuCategory, children: [{category: MenuCategory}]}]
+     */
+    public function getMenuTree(int $shopId): array
+    {
+        return $this->cache->load("menu_tree_$shopId", function () use ($shopId) {
+            return $this->buildMenuTree($shopId);
+        });
+    }
+
+    /**
+     * Build 2-level menu tree from database
+     */
+    private function buildMenuTree(int $shopId): array
+    {
+        $selection = $this->getVisibleCategoriesSelection($shopId);
+        $categories = $this->mapRowsToEntities($selection);
+
+        $roots = [];
+        $childrenByParent = [];
+
+        foreach ($categories as $category) {
+            if ($category->isRoot()) {
+                $roots[] = $category;
+            } elseif ($category->parentId !== null) {
+                $childrenByParent[$category->parentId][] = $category;
+            }
+        }
+
+        $tree = [];
+        foreach ($roots as $root) {
+            $tree[] = [
+                'category' => $root,
+                'children' => array_map(
+                    fn($child) => ['category' => $child],
+                    $childrenByParent[$root->id] ?? [],
+                ),
+            ];
+        }
+
+        return $tree;
+    }
+
+    /**
+     * Invalidate menu cache for shop (call from admin after changes)
+     */
+    public function invalidateMenuCache(int $shopId): void
+    {
+        $this->cache->remove("menu_tree_$shopId");
     }
 
     /**

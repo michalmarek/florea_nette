@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UI\Base;
 
+use App\Model\Category\MenuCategoryRepository;
 use Nette\Application\UI\Presenter;
 use App\Shop\ShopContext;
 
@@ -19,10 +20,17 @@ abstract class BasePresenter extends Presenter
 {
     // ShopContext injected via DI (available in all child presenters)
     protected ?ShopContext $shopContext = null;
+    private MenuCategoryRepository $menuCategoryRepository;
 
     public function injectShopContext(ShopContext $shopContext): void
     {
         $this->shopContext = $shopContext;
+    }
+
+    public function injectMenuCategoryRepository(
+        MenuCategoryRepository $menuCategoryRepository,
+    ): void {
+        $this->menuCategoryRepository = $menuCategoryRepository;
     }
 
     protected function startup(): void
@@ -151,6 +159,10 @@ abstract class BasePresenter extends Presenter
     protected function beforeRender(): void
     {
         parent::beforeRender();
+
+        $this->template->menuTree = $this->menuCategoryRepository->getMenuTree(
+            $this->shopContext->getId(),
+        );
 
         // Add presenter and action to template (useful for CSS classes, debugging)
         $this->template->presenterName = $this->getName();
