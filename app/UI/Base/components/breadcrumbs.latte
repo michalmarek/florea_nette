@@ -1,0 +1,17 @@
+{*
+    Breadcrumbs component
+    @param array $items - [{name, url, destination, params}] ordered root → current
+*}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        {foreach $items as $item}
+            {if !$iterator->last}
+                <li class="breadcrumb-item">
+                    <a n:href="$item['destination'], (expand) $item['params']">{$item['name']}</a>
+                </li>
+            {else}
+                <li class="breadcrumb-item active" aria-current="page">{$item['name']}</li>
+            {/if}
+        {/foreach}
+    </ol>
+</nav>

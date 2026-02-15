@@ -1,0 +1,60 @@
+<?php declare(strict_types=1);
+
+namespace App\Model\Category;
+
+/**
+ * BaseCategory Entity
+ *
+ * Represents internal product categorization from fl_kategorie table.
+ * Used for internal product classification, feeds, and parameter groups.
+ *
+ * Uses hybrid approach:
+ * - Public readonly: Simple data passthrough
+ * - Private readonly + getter: Data with business logic
+ */
+class BaseCategory
+{
+    public function __construct(
+        public readonly int $id,
+        public readonly ?int $parentId,
+        public readonly ?int $variantParameterGroupId,
+        public readonly string $photo,
+        public readonly string $heurekaFeed,
+        public readonly string $zboziFeed,
+        public readonly string $googleFeed,
+        public readonly bool $visible,
+        public readonly int $position,
+
+        private readonly ?string $parameterGroups,
+    ) {}
+
+    /**
+     * Get parameter groups as decoded array
+     */
+    public function getParameterGroups(): array
+    {
+        if ($this->parameterGroups === null || $this->parameterGroups === '') {
+            return [];
+        }
+
+        $decoded = json_decode($this->parameterGroups, true);
+
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    /**
+     * Check if category is root (has no parent)
+     */
+    public function isRoot(): bool
+    {
+        return $this->parentId === null;
+    }
+
+    /**
+     * Check if category has parameter groups configured
+     */
+    public function hasParameterGroups(): bool
+    {
+        return !empty($this->getParameterGroups());
+    }
+}

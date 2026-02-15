@@ -1,0 +1,45 @@
+{block content}
+
+{* Breadcrumbs *}
+{include '../components/breadcrumbs.latte', items: $breadcrumbs}
+
+{* Název kategorie *}
+<h1>{$category->name}</h1>
+
+{* Popis kategorie *}
+{if $category->description}
+    <div class="lead mb-4">
+        {$category->description|noescape}
+    </div>
+{/if}
+
+{* Podkategorie *}
+{if count($childCategories) > 0}
+    <div class="mb-5">
+        <h2 class="h4 mb-3">Podkategorie</h2>
+        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-3">
+            {foreach $childCategories as $child}
+                <div class="col">
+                    {include '../components/categoryCard.latte', category: $child}
+                </div>
+            {/foreach}
+        </div>
+    </div>
+{/if}
+
+{* TODO: Products Grid - doplnit po migraci ProductRepository *}
+
+{* TODO: Pagination - doplnit po migraci ProductRepository *}
+
+{* SEO text *}
+{if $category->productsDescription}
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    {$category->productsDescription|noescape}
+                </div>
+            </div>
+        </div>
+    </div>
+{/if}

@@ -11,6 +11,7 @@ use Nette\Application\Response;
 use Nette\Application\Responses\CallbackResponse;
 use Nette\Application\Responses\ForwardResponse;
 use Nette\Http;
+use Tracy\Debugger;
 
 /**
  * Handles 4xx HTTP errors (not found, forbidden, etc.)
@@ -28,6 +29,11 @@ class ErrorPresenter implements IPresenter
         if ($exception instanceof BadRequestException) {
             [$module, , $sep] = \Nette\Application\Helpers::splitName($request->getPresenterName());
             return new ForwardResponse($request->setPresenterName($module . $sep . 'Error4xx'));
+        }
+
+        // In debug mode, let Tracy handle 500 errors
+        if (Debugger::isEnabled() && Debugger::$productionMode === false) {
+            throw $exception;
         }
 
         return new CallbackResponse(function (Http\IRequest $httpRequest, Http\IResponse $httpResponse): void {

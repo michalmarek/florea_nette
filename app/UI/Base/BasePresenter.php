@@ -18,7 +18,7 @@ use App\Shop\ShopContext;
 abstract class BasePresenter extends Presenter
 {
     // ShopContext injected via DI (available in all child presenters)
-    private ?ShopContext $shopContext = null;
+    protected ?ShopContext $shopContext = null;
 
     public function injectShopContext(ShopContext $shopContext): void
     {
