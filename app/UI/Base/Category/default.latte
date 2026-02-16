@@ -27,9 +27,26 @@
     </div>
 {/if}
 
-{* TODO: Products Grid - doplnit po migraci ProductRepository *}
+{* Products Grid *}
+{if count($products) > 0}
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 mb-4">
+        {foreach $products as $product}
+            <div class="col">
+                {include '../components/productCard.latte', product: $product}
+            </div>
+        {/foreach}
+    </div>
+{else}
+    <p class="text-muted">V této kategorii nejsou žádné produkty.</p>
+{/if}
 
-{* TODO: Pagination - doplnit po migraci ProductRepository *}
+{* Pagination *}
+{include '../components/pagination.latte',
+    page: $pagination['page'],
+    lastPage: $pagination['lastPage'],
+    destination: 'Category:default',
+    params: ['slug' => $category->url]
+}
 
 {* SEO text *}
 {if $category->productsDescription}

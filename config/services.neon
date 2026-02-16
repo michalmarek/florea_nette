@@ -19,3 +19,4 @@ services:
     # === Repositories ===
     - App\Model\Category\BaseCategoryRepository
     - App\Model\Category\MenuCategoryRepository
+    - App\Model\Product\ProductRepository

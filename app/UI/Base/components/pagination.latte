@@ -1,0 +1,81 @@
+{*
+    Pagination component - Bootstrap 5
+    @param int $page - current page
+    @param int $lastPage - last page
+    @param string $destination - link destination (e.g. 'Category:default', 'this')
+    @param array $params - link parameters (e.g. ['slug' => 'kategorie'])
+    @param int $range - pages around current (default: 2)
+*}
+
+{if $lastPage > 1}
+    {var $range = $range ?? 2}
+
+    <nav aria-label="Stránkování">
+        <ul class="pagination justify-content-center">
+
+            {* Previous *}
+            {if $page > 1}
+                <li class="page-item">
+                    <a class="page-link" n:href="$destination, (expand) $params, p => $page - 1" aria-label="Předchozí">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {else}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo;</span>
+                </li>
+            {/if}
+
+            {* First page + ellipsis *}
+            {if $page > $range + 2}
+                <li class="page-item">
+                    <a class="page-link" n:href="$destination, (expand) $params, p => 1">1</a>
+                </li>
+                {if $page > $range + 3}
+                    <li class="page-item disabled">
+                        <span class="page-link">&hellip;</span>
+                    </li>
+                {/if}
+            {/if}
+
+            {* Pages around current *}
+            {for $i = max(1, $page - $range); $i <= min($lastPage, $page + $range); $i++}
+                {if $i === $page}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{$i}</span>
+                    </li>
+                {else}
+                    <li class="page-item">
+                        <a class="page-link" n:href="$destination, (expand) $params, p => $i">{$i}</a>
+                    </li>
+                {/if}
+            {/for}
+
+            {* Last page + ellipsis *}
+            {if $page < $lastPage - $range - 1}
+                {if $page < $lastPage - $range - 2}
+                    <li class="page-item disabled">
+                        <span class="page-link">&hellip;</span>
+                    </li>
+                {/if}
+                <li class="page-item">
+                    <a class="page-link" n:href="$destination, (expand) $params, p => $lastPage">{$lastPage}</a>
+                </li>
+            {/if}
+
+            {* Next *}
+            {if $page < $lastPage}
+                <li class="page-item">
+                    <a class="page-link" n:href="$destination, (expand) $params, p => $page + 1" aria-label="Následující">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {else}
+                <li class="page-item disabled">
+                    <span class="page-link">&raquo;</span>
+                </li>
+            {/if}
+
+        </ul>
+    </nav>
+{/if}

@@ -1,0 +1,40 @@
+{*
+ * Product Card component
+ *
+ * @param Product $product
+ *}
+
+<div class="card h-100">
+    {* Placeholder pro obrázek *}
+    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+        <span class="text-muted">Bez obrázku</span>
+    </div>
+
+    <div class="card-body d-flex flex-column">
+        <h5 class="card-title">
+            <a n:href="Product:detail, id => $product->id" class="text-decoration-none text-dark">
+                {$product->name}
+            </a>
+        </h5>
+
+        <div class="mt-auto">
+            {if $product->getPriceWithVat() > 0}
+                <p class="h5 mb-3">
+                    {if $product->isOnSale()}
+                        <small class="text-muted text-decoration-line-through">
+                            {$product->getOriginalPriceWithVat()|number:0} Kč
+                        </small>
+                        <br>
+                    {/if}
+                    {$product->getPriceWithVat()|number:0} Kč
+                </p>
+            {else}
+                <p class="h5 mb-3 text-muted">Cena na dotaz</p>
+            {/if}
+
+            <a n:href="Product:detail, id => $product->id" class="btn btn-primary w-100">
+                Detail produktu
+            </a>
+        </div>
+    </div>
+</div>

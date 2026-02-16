@@ -50,6 +50,20 @@ class MenuCategoryRepository
     }
 
     /**
+     * Find menu category by base category ID for specific shop
+     */
+    public function findByBaseCategoryId(int $baseCategoryId, int $shopId): ?MenuCategory
+    {
+        $row = $this->database->table('es_menu_categories')
+            ->where('shop_id', $shopId)
+            ->where('base_category_id', $baseCategoryId)
+            ->where('visible', 1)
+            ->fetch();
+
+        return $row ? $this->mapToEntity($row) : null;
+    }
+
+    /**
      * Get Selection for all visible menu categories in shop
      */
     public function getVisibleCategoriesSelection(int $shopId): Selection

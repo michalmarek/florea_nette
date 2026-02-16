@@ -4,6 +4,9 @@
 *}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a n:href="Home:default">{$shopContext->getWebsiteName()}</a>
+        </li>
         {foreach $items as $item}
             {if !$iterator->last}
                 <li class="breadcrumb-item">
