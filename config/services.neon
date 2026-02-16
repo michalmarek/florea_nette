@@ -20,3 +20,5 @@ services:
     - App\Model\Category\BaseCategoryRepository
     - App\Model\Category\MenuCategoryRepository
     - App\Model\Product\ProductRepository
+    - App\Model\Product\ProductVariantService
+    - App\Model\Parameter\ParameterGroupRepository

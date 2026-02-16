@@ -275,6 +275,15 @@ class ProductRepository
     }
 
     /**
+     * Map single database row to Product entity (public, for use by services)
+     */
+    public function mapRowToEntity(object $row, int $shopId): Product
+    {
+        $text = $this->getTextForShop((int) $row->id, $shopId);
+        return $this->mapToEntity($row, $text, $shopId);
+    }
+
+    /**
      * Map database row + text to Product entity
      */
     private function mapToEntity(object $row, ?object $text, int $shopId): Product

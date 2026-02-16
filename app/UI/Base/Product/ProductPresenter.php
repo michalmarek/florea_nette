@@ -4,6 +4,7 @@ namespace App\UI\Base\Product;
 
 use App\UI\Base\BasePresenter;
 use App\Model\Product\ProductRepository;
+use App\Model\Product\ProductVariantService;
 use App\Model\Category\MenuCategoryRepository;
 
 /**
@@ -14,13 +15,16 @@ use App\Model\Category\MenuCategoryRepository;
 class ProductPresenter extends BasePresenter
 {
     private ProductRepository $productRepository;
+    private ProductVariantService $variantService;
     private MenuCategoryRepository $menuCategoryRepository;
 
     public function injectProductDependencies(
         ProductRepository $productRepository,
+        ProductVariantService $variantService,
         MenuCategoryRepository $menuCategoryRepository,
     ): void {
         $this->productRepository = $productRepository;
+        $this->variantService = $variantService;
         $this->menuCategoryRepository = $menuCategoryRepository;
     }
 
@@ -33,8 +37,10 @@ class ProductPresenter extends BasePresenter
         if (!$product) {
             $this->error('Produkt nebyl nalezen');
         }
+        $variants = $this->variantService->getVariants($product, $shopId);
 
         $this->template->product = $product;
+        $this->template->variants = $variants;
         $this->template->breadcrumbs = $this->buildBreadcrumbs($product, $shopId);
     }
 

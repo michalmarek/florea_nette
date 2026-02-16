@@ -53,7 +53,26 @@
             </div>
         {/if}
 
-        {* TODO: Varianty - doplnit po migraci ProductVariantService *}
+        {* Varianty *}
+        {if count($variants) > 1}
+            <div class="mb-4">
+                <h3 class="h5 mb-3">Dostupné varianty:</h3>
+                <div class="d-flex flex-wrap gap-2">
+                    {foreach $variants as $variant}
+                        {if $variant['product']->id === $product->id}
+                            <span class="btn btn-primary active">
+                                {$variant['label']}
+                            </span>
+                        {else}
+                            <a n:href="Product:detail, id => $variant['product']->id"
+                                    class="btn btn-outline-primary">
+                                {$variant['label']}
+                            </a>
+                        {/if}
+                    {/foreach}
+                </div>
+            </div>
+        {/if}
 
         {* TODO: Přidat do košíku - doplnit po migraci Cart *}
     </div>
