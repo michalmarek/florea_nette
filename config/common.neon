@@ -4,6 +4,7 @@
 includes:
     - domains.neon
     - services.neon
+    - email.neon
 
 
 parameters:

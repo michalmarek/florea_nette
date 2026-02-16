@@ -18,14 +18,15 @@
     "nette/robot-loader": "^4.0",
     "nette/security": "^3.2",
     "nette/utils": "^4.0",
-    "tracy/tracy": "^2.10"
+    "tracy/tracy": "^2.10",
+    "xqueue/maileon-api-client": "^1.0"
   },
   "require-dev": {
     "nette/tester": "^2.5"
   },
   "autoload": {
     "psr-4": {
-      "App\\": "app/"
+      "App\\": "App/"
     }
   },
   "minimum-stability": "stable",

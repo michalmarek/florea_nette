@@ -1,0 +1,47 @@
+# Email configuration
+# Providers: Maileon (customer-facing), SMTP (internal)
+
+parameters:
+    email:
+        maileon:
+            apiKey: '2c01c285-502e-4437-9711-4195d26a0d00'
+            baseUrl: 'https://api.maileon.com/1.0/'
+            events:
+                passwordReset: 477
+
+        smtp:
+            host: localhost
+            port: 1025
+            username: ''
+            password: ''
+            encryption: null
+
+        from:
+            email: obchod@florea.cz
+            name: Florea.cz
+
+
+services:
+    mail.mailer:
+        factory: Nette\Mail\SmtpMailer
+        arguments:
+            host: %email.smtp.host%
+            port: %email.smtp.port%
+            username: %email.smtp.username%
+            password: %email.smtp.password%
+            encryption: %email.smtp.encryption%
+
+    mail.maileonProvider:
+        factory: App\Core\Email\Provider\MaileonProvider
+        arguments:
+            apiKey: %email.maileon.apiKey%
+            baseUrl: %email.maileon.baseUrl%
+
+    mail.netteMailProvider:
+        factory: App\Core\Email\Provider\NetteMailProvider
+        arguments:
+            mailer: @mail.mailer
+            defaultFromEmail: %email.from.email%
+            defaultFromName: %email.from.name%
+
+    - App\Core\Email\EmailService

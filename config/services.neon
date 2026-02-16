@@ -26,3 +26,8 @@ services:
     - App\Model\Customer\CustomerAuthenticator
     - App\Model\Customer\CustomerRepository
     - App\Model\Customer\DeliveryAddressRepository
+    - App\Model\Customer\PasswordResetTokenRepository
+    -
+        factory: App\Model\Customer\PasswordResetService
+        arguments:
+            passwordResetEventId: %email.maileon.events.passwordReset%
