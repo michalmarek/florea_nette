@@ -22,3 +22,6 @@ services:
     - App\Model\Product\ProductRepository
     - App\Model\Product\ProductVariantService
     - App\Model\Parameter\ParameterGroupRepository
+    - App\Model\Customer\CustomerAuthenticator
+    - App\Model\Customer\CustomerRepository
+    - App\Model\Customer\DeliveryAddressRepository

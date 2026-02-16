@@ -70,8 +70,9 @@ routes:
       presenter: Account
       action: addresses
 
-    # Address CRUD používá handlery (add, edit, delete, setDefault)
-    # Bez explicitních routes - volají se přes n:href="delete! $address->id"
+    - mask: 'muj-ucet/adresy/<id>/upravit'
+      presenter: Account
+      action: editAddress
 
     # === FALLBACK (musí být poslední!) ===
     - mask: '<presenter>/<action>[/<id>]'

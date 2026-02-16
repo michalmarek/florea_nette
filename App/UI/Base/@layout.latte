@@ -65,6 +65,19 @@
                         </ul>
                     {/block}
                 </div>
+
+                {* Customer Info *}
+                <div class="user-menu ms-3 small">
+                    {if $user->loggedIn}
+                        Přihlášen jako: <strong>{$user->identity->firstName} {$user->identity->lastName}</strong><br>
+                        <a n:href="Account:profile">Můj účet</a> |
+                        <a n:href="Auth:logout">Odhlásit</a>
+                    {else}
+                        Nejste přihlášen<br>
+                        <a n:href="Auth:login">Přihlásit se</a> |
+                        <a n:href="Auth:register">Registrace</a>
+                    {/if}
+                </div>
             </div>
         </nav>
 </header>
