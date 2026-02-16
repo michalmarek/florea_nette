@@ -17,6 +17,7 @@ services:
 
 
     # === Repositories ===
+    - App\Core\FormFactory
     - App\Model\Category\BaseCategoryRepository
     - App\Model\Category\MenuCategoryRepository
     - App\Model\Product\ProductRepository

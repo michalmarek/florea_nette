@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\UI\Base;
 
+use App\Core\FormFactory;
 use App\Model\Category\MenuCategoryRepository;
 use Nette\Application\UI\Presenter;
 use App\Shop\ShopContext;
@@ -21,10 +22,16 @@ abstract class BasePresenter extends Presenter
     // ShopContext injected via DI (available in all child presenters)
     protected ?ShopContext $shopContext = null;
     private MenuCategoryRepository $menuCategoryRepository;
+    protected FormFactory $formFactory;
 
     public function injectShopContext(ShopContext $shopContext): void
     {
         $this->shopContext = $shopContext;
+    }
+
+    public function injectFormFactory(\App\Core\FormFactory $formFactory): void
+    {
+        $this->formFactory = $formFactory;
     }
 
     public function injectMenuCategoryRepository(

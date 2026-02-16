@@ -51,7 +51,7 @@ class AuthPresenter extends BasePresenter
      */
     protected function createComponentLoginForm(): Form
     {
-        $form = new Form;
+        $form = $this->formFactory->create();
 
         $form->addText('login', 'Přihlašovací jméno:')
             ->setRequired('Vyplňte přihlašovací jméno');
@@ -137,7 +137,7 @@ class AuthPresenter extends BasePresenter
      */
     protected function createComponentRegisterForm(): Form
     {
-        $form = new Form;
+        $form = $this->formFactory->create();
 
         $form->addText('login', 'Přihlašovací jméno:')
             ->setRequired('Vyplňte přihlašovací jméno')

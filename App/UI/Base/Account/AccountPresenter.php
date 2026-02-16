@@ -116,7 +116,7 @@ class AccountPresenter extends BasePresenter
 
     protected function createComponentProfileForm(): Form
     {
-        $form = new Form;
+        $form = $this->formFactory->create();
 
         $form->addEmail('email', 'E-mail:')
             ->setRequired('Vyplňte e-mail');
@@ -190,7 +190,7 @@ class AccountPresenter extends BasePresenter
 
     protected function createComponentPasswordForm(): Form
     {
-        $form = new Form;
+        $form = $this->formFactory->create();
 
         $form->addPassword('currentPassword', 'Současné heslo:')
             ->setRequired('Vyplňte současné heslo');
@@ -292,7 +292,7 @@ class AccountPresenter extends BasePresenter
 
     protected function createComponentAddressForm(): Form
     {
-        $form = new Form;
+        $form = $this->formFactory->create();
 
         $form->addText('name', 'Název adresy:')
             ->setRequired('Vyplňte název (např. Domů, Do práce...)')
