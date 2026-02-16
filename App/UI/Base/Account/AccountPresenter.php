@@ -159,6 +159,7 @@ class AccountPresenter extends BasePresenter
             ]);
 
             // Update identity in session with new data
+            /** @var \Nette\Security\SimpleIdentity $identity */
             $identity = $this->getUser()->getIdentity();
             $this->getUser()->login(new SimpleIdentity(
                 $identity->getId(),
@@ -170,13 +171,13 @@ class AccountPresenter extends BasePresenter
                     'login' => $identity->login,
                 ],
             ));
-
-            $this->flashMessage('Profil byl úspěšně aktualizován.', 'success');
-            $this->redirect('Account:profile');
-
         } catch (\Exception $e) {
             $form->addError('Při ukládání došlo k chybě. Zkuste to prosím znovu.');
+            return;
         }
+
+        $this->flashMessage('Profil byl úspěšně aktualizován.', 'success');
+        $this->redirect('Account:profile');
     }
 
     // =====================================================================
@@ -221,13 +222,13 @@ class AccountPresenter extends BasePresenter
 
         try {
             $this->customerRepository->updatePassword($customer->id, $values->newPassword);
-
-            $this->flashMessage('Heslo bylo úspěšně změněno.', 'success');
-            $this->redirect('Account:profile');
-
         } catch (\Exception $e) {
             $form->addError('Při změně hesla došlo k chybě.');
+            return;
         }
+
+        $this->flashMessage('Heslo bylo úspěšně změněno.', 'success');
+        $this->redirect('Account:profile');
     }
 
     // =====================================================================
@@ -345,11 +346,11 @@ class AccountPresenter extends BasePresenter
                 $this->deliveryAddressRepository->create($data);
                 $this->flashMessage('Adresa byla úspěšně přidána.', 'success');
             }
-
-            $this->redirect('Account:addresses');
-
         } catch (\Exception $e) {
             $form->addError('Při ukládání adresy došlo k chybě.');
+            return;
         }
+
+        $this->redirect('Account:addresses');
     }
 }
