@@ -64,7 +64,7 @@
                                 {$variant['label']}
                             </span>
                         {else}
-                            <a n:href="Product:detail, id => $variant['product']->id"
+                            <a n:href="Product:detail, slug => $variant['product']->url"
                                     class="btn btn-outline-primary">
                                 {$variant['label']}
                             </a>
@@ -75,5 +75,7 @@
         {/if}
 
         {* TODO: Přidat do košíku - doplnit po migraci Cart *}
+
+        <p class="text-muted">ID {$product->id}</p>
     </div>
 </div>

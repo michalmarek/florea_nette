@@ -28,7 +28,30 @@ class ProductPresenter extends BasePresenter
         $this->menuCategoryRepository = $menuCategoryRepository;
     }
 
-    public function actionDetail(int $id): void
+    /**
+     * Product detail by URL slug (primary)
+     */
+    public function actionDetail(string $slug): void
+    {
+        $shopId = $this->shopContext->getId();
+
+        $product = $this->productRepository->findByUrl($slug, $shopId);
+
+        if (!$product) {
+            $this->error('Produkt nebyl nalezen');
+        }
+
+        $variants = $this->variantService->getVariants($product, $shopId);
+
+        $this->template->product = $product;
+        $this->template->variants = $variants;
+        $this->template->breadcrumbs = $this->buildBreadcrumbs($product, $shopId);
+    }
+
+    /**
+     * Product detail by ID (fallback, redirects to slug URL)
+     */
+    public function actionDetailById(int $id): void
     {
         $shopId = $this->shopContext->getId();
 
@@ -37,11 +60,8 @@ class ProductPresenter extends BasePresenter
         if (!$product) {
             $this->error('Produkt nebyl nalezen');
         }
-        $variants = $this->variantService->getVariants($product, $shopId);
 
-        $this->template->product = $product;
-        $this->template->variants = $variants;
-        $this->template->breadcrumbs = $this->buildBreadcrumbs($product, $shopId);
+        $this->redirectPermanent('detail', ['slug' => $product->url]);
     }
 
     /**

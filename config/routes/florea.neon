@@ -7,7 +7,11 @@ routes:
       action: default
 
     # === PRODUKTY ===
-    - mask: 'produkt/<id \d+>'
+    - mask: 'produkt/id/<id \d+>'
+      presenter: Product
+      action: detailById
+
+    - mask: 'produkt/<slug>'
       presenter: Product
       action: detail
 
