@@ -131,7 +131,6 @@ class ProductRepository
         if (!empty($baseCategoryIds)) {
             $categoryProducts = $this->database->table('es_zbozi')
                 ->select('id')
-                ->where('shop', $shopId)
                 ->where('fl_kategorie', $baseCategoryIds)
                 ->where('fl_zobrazovat', '1')
                 ->fetchPairs(null, 'id');
@@ -185,7 +184,6 @@ class ProductRepository
         if (!empty($baseCategoryIds)) {
             $categoryProducts = $this->database->table('es_zbozi')
                 ->select('id')
-                ->where('shop', $shopId)
                 ->where('fl_kategorie', $baseCategoryIds)
                 ->where('fl_zobrazovat', '1')
                 ->fetchPairs(null, 'id');
@@ -262,6 +260,7 @@ class ProductRepository
     public function filterProductIds(
         array $productIds,
         array $itemFilters,
+        array $numericItemFilters,
         array $numericFilters,
         ?array $priceFilter,
         bool $stockFilter = false,
@@ -282,6 +281,25 @@ class ProductRepository
                 ->where('product_id', $filtered)
                 ->where('group_id', $groupId)
                 ->where('item_id', $itemIds)
+                ->fetchPairs(null, 'product_id');
+
+            $filtered = array_values(array_intersect($filtered, $matching));
+
+            if (empty($filtered)) {
+                return [];
+            }
+        }
+
+        // Numeric values displayed as checkboxes (freeInteger IN (...))
+        foreach ($numericItemFilters as $groupId => $values) {
+            if (empty($values)) {
+                continue;
+            }
+
+            $matching = $this->database->table('es_zboziParameters')
+                ->where('product_id', $filtered)
+                ->where('group_id', $groupId)
+                ->where('freeInteger', $values)
                 ->fetchPairs(null, 'product_id');
 
             $filtered = array_values(array_intersect($filtered, $matching));
@@ -349,7 +367,6 @@ class ProductRepository
     public function getVisibleProductsSelection(int $shopId): Selection
     {
         return $this->database->table('es_zbozi')
-            ->where('shop', $shopId)
             ->where('fl_zobrazovat', '1')
             ->order('nazev ASC');
     }

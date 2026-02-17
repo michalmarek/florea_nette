@@ -60,8 +60,10 @@ class CategoryFilterService
     public function parseActiveFilters(array $availableFilters): array
     {
         $itemFilters = [];
+        $numericItemFilters = [];
         $numericFilters = [];
         $priceFilter = null;
+        $stockFilter = false;
 
         foreach ($availableFilters as $filter) {
             if (!$filter->isActive()) {
@@ -71,7 +73,11 @@ class CategoryFilterService
             $groupId = $this->extractGroupId($filter->key);
 
             if ($filter->type === CategoryFilter::TYPE_ITEM && $groupId !== null) {
-                $itemFilters[$groupId] = $filter->activeItems;
+                if ($this->isNumericCheckboxFilter($groupId)) {
+                    $numericItemFilters[$groupId] = $filter->activeItems;
+                } else {
+                    $itemFilters[$groupId] = $filter->activeItems;
+                }
             } elseif ($filter->type === CategoryFilter::TYPE_NUMERIC && $groupId !== null) {
                 $numericFilters[$groupId] = [
                     'min' => $filter->activeMin,
@@ -90,6 +96,7 @@ class CategoryFilterService
 
         return [
             'itemFilters' => $itemFilters,
+            'numericItemFilters' => $numericItemFilters,
             'numericFilters' => $numericFilters,
             'priceFilter' => $priceFilter,
             'stockFilter' => $stockFilter ?? false,
@@ -133,8 +140,12 @@ class CategoryFilterService
             $key = 'f' . $groupId;
             $activeValue = $activeParams[$key] ?? null;
 
+            $display = $conf['display'] ?? null;
+
             if ($group->isItemBased()) {
                 $filter = $this->buildItemFilter($group, $key, $sort, $productIds, $activeValue);
+            } elseif ($group->isNumeric() && $display === 'checkbox') {
+                $filter = $this->buildNumericCheckboxFilter($group, $key, $sort, $productIds, $activeValue);
             } elseif ($group->isNumeric()) {
                 $filter = $this->buildNumericFilter($group, $key, $sort, $productIds, $activeValue);
             } else {
@@ -193,6 +204,56 @@ class CategoryFilterService
         }
 
         usort($items, fn($a, $b) => strcmp($a['value'], $b['value']));
+
+        $activeItems = [];
+        if ($activeValue !== null && $activeValue !== '') {
+            $activeItems = array_map('intval', explode(',', $activeValue));
+        }
+
+        return new CategoryFilter(
+            key: $key,
+            name: $group->name,
+            type: CategoryFilter::TYPE_ITEM,
+            units: null,
+            sort: $sort,
+            items: $items,
+            activeItems: $activeItems,
+        );
+    }
+
+    /**
+     * Build checkbox filter from freeInteger values
+     *
+     * Displays distinct numeric values as checkboxes instead of range.
+     */
+    private function buildNumericCheckboxFilter(
+        ParameterGroup $group,
+        string $key,
+        int $sort,
+        array $productIds,
+        ?string $activeValue,
+    ): ?CategoryFilter {
+        $rows = $this->database->table('es_zboziParameters')
+            ->select('freeInteger, COUNT(DISTINCT product_id) AS cnt')
+            ->where('product_id', $productIds)
+            ->where('group_id', $group->id)
+            ->where('freeInteger IS NOT NULL')
+            ->group('freeInteger')
+            ->order('freeInteger ASC')
+            ->fetchAll();
+
+        if (empty($rows)) {
+            return null;
+        }
+
+        $items = [];
+        foreach ($rows as $row) {
+            $items[] = [
+                'id' => (int) $row->freeInteger,
+                'value' => $group->getLabel($row->freeInteger),
+                'count' => (int) $row->cnt,
+            ];
+        }
 
         $activeItems = [];
         if ($activeValue !== null && $activeValue !== '') {
@@ -340,5 +401,11 @@ class CategoryFilterService
             return (int) $m[1];
         }
         return null;
+    }
+
+    private function isNumericCheckboxFilter(int $groupId): bool
+    {
+        $group = $this->parameterGroupRepository->findById($groupId);
+        return $group !== null && $group->isNumeric();
     }
 }

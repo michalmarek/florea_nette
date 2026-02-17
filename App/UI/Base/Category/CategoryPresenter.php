@@ -67,6 +67,7 @@ class CategoryPresenter extends BasePresenter
         $filteredProductIds = $this->productRepository->filterProductIds(
             $allProductIds,
             $parsed['itemFilters'],
+            $parsed['numericItemFilters'],
             $parsed['numericFilters'],
             $parsed['priceFilter'],
             $parsed['stockFilter'],
