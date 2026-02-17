@@ -19,6 +19,10 @@
     <div class="card-body">
         <form class="filter-form" method="get" action="{link Category:default, slug: $slug}">
 
+            {if $activeParams['sort'] ?? null}
+                <input type="hidden" name="sort" value="{$activeParams['sort']}">
+            {/if}
+
             {foreach $filters as $filter}
                 <div class="mb-4{if !$iterator->last} border-bottom pb-4{/if}">
                     <h6 class="fw-bold mb-2">
@@ -136,6 +140,13 @@
                 var r = ranges[key];
                 if (r.min || r.max) {
                     params.set(key, r.min + '-' + r.max);
+                }
+            });
+
+            // Collect hidden inputs (sort, etc.)
+            form.querySelectorAll('input[type="hidden"]').forEach(function(hidden) {
+                if (hidden.value) {
+                    params.set(hidden.name, hidden.value);
                 }
             });
 

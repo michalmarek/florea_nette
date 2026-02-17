@@ -47,10 +47,8 @@ class CategoryPresenter extends BasePresenter
         $childrenSelection = $this->menuCategoryRepository->getChildrenSelection($category->id);
         $childCategories = $this->menuCategoryRepository->mapRowsToEntities($childrenSelection);
 
-        // Products (funnel: all descendants + manual assignments)
+        // All product IDs in category (funnel)
         $menuCategoryIds = $this->menuCategoryRepository->getAllDescendantIds($category->id, $shopId);
-
-        // All product IDs before filtering (for filter counts)
         $allProductIds = $this->productRepository->getProductIdsByMenuCategory($shopId, $menuCategoryIds);
 
         // Parse filter params from URL (handles both JS and no-JS format)
@@ -63,10 +61,7 @@ class CategoryPresenter extends BasePresenter
             $activeParams,
         );
 
-        // Apply active filters
-        $filteredProductIds = $allProductIds;
-
-        // Apply filters (stock filter runs always as default)
+        // Apply filters
         $parsed = $this->categoryFilterService->parseActiveFilters($filters);
 
         $filteredProductIds = $this->productRepository->filterProductIds(
@@ -77,24 +72,22 @@ class CategoryPresenter extends BasePresenter
             $parsed['stockFilter'],
         );
 
-        // Paginate
+        // Sort + paginate (single DB query)
+        $sort = $this->getParameter('sort') ?? 'priority';
         $perPage = $this->getParameter('productsPerPage', 20);
-        $totalProducts = count($filteredProductIds);
+
+        $products = $this->productRepository->getPagedProducts(
+            $filteredProductIds,
+            $shopId,
+            $sort,
+            $p,
+            $perPage,
+            $totalProducts,
+        );
+
         $lastPage = max(1, (int) ceil($totalProducts / $perPage));
-        $p = min($p, $lastPage);
-
-        $pageProductIds = array_slice($filteredProductIds, ($p - 1) * $perPage, $perPage);
-
-        // Load entities and preserve order
-        $productsById = !empty($pageProductIds)
-            ? $this->productRepository->findByIds($pageProductIds, $shopId)
-            : [];
-
-        $products = [];
-        foreach ($pageProductIds as $id) {
-            if (isset($productsById[$id])) {
-                $products[] = $productsById[$id];
-            }
+        if ($p > $lastPage) {
+            $this->redirect('this', ['slug' => $slug, 'p' => $lastPage] + $activeParams);
         }
 
         // Breadcrumbs
@@ -116,6 +109,7 @@ class CategoryPresenter extends BasePresenter
         $this->template->filters = $filters;
         $this->template->activeFilterParams = $activeParams;
         $this->template->totalProducts = $totalProducts;
+        $this->template->currentSort = $sort;
         $this->template->pagination = [
             'page' => $p,
             'lastPage' => $lastPage,
@@ -156,6 +150,11 @@ class CategoryPresenter extends BasePresenter
             // Stock filter
             if ($key === 'stock') {
                 $params['stock'] = (string) $value;
+            }
+
+            // Sort
+            if ($key === 'sort') {
+                $params['sort'] = (string) $value;
             }
         }
 

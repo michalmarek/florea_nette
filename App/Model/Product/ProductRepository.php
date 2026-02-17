@@ -203,6 +203,52 @@ class ProductRepository
     }
 
     /**
+     * Get paginated products from filtered ID set with sorting
+     *
+     * Single query with ORDER BY + LIMIT on pre-filtered IDs.
+     * More efficient than loading all IDs and slicing in PHP.
+     *
+     * @param int[] $productIds Pre-filtered product IDs
+     * @param string $sort Sort key: 'priority', 'price-asc', 'price-desc', 'name', 'newest'
+     * @param int $page Current page (1-based)
+     * @param int $perPage Products per page
+     * @param int|null &$totalCount Output: total matching products (for pagination)
+     * @return Product[]
+     */
+    public function getPagedProducts(
+        array $productIds,
+        int $shopId,
+        string $sort,
+        int $page,
+        int $perPage,
+        ?int &$totalCount = null,
+    ): array {
+        if (empty($productIds)) {
+            $totalCount = 0;
+            return [];
+        }
+
+        $totalCount = count($productIds);
+
+        $query = $this->database->table('es_zbozi')
+            ->where('id', $productIds);
+
+        // Apply sort
+        $query->order(match ($sort) {
+            'price-asc' => 'cenaFlorea ASC',
+            'price-desc' => 'cenaFlorea DESC',
+            'name' => 'nazev ASC',
+            'newest' => 'id DESC',
+            default => 'priority DESC, nazev ASC',  // 'priority' or fallback
+        });
+
+        // Paginate
+        $query->limit($perPage, ($page - 1) * $perPage);
+
+        return $this->mapRowsToEntities($query, $shopId);
+    }
+
+    /**
      * Filter product IDs by parameter values and price range
      *
      * AND logic between groups, OR logic within item-based group.

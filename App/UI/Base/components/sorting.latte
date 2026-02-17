@@ -1,0 +1,36 @@
+{*
+ * Product sorting dropdown
+ *
+ * @param string $currentSort - active sort key
+ * @param array $activeParams - active filter params (to preserve in links)
+ * @param string $slug - category URL slug
+ *}
+
+{var $sortOptions = [
+'priority' => 'Dle oblíbenosti',
+'price-asc' => 'Cena od nejnižší',
+'price-desc' => 'Cena od nejvyšší',
+'name' => 'Název A–Z',
+'newest' => 'Nejnovější',
+]}
+
+<div class="dropdown">
+    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        {$sortOptions[$currentSort] ?? 'Řazení'}
+    </button>
+    <ul class="dropdown-menu">
+        {foreach $sortOptions as $key => $label}
+            <li>
+                {var $linkParams = array_merge($activeParams, ['slug' => $slug, 'sort' => $key])}
+                {* Remove sort param when it's default *}
+                {if $key === 'priority'}
+                    {var $linkParams = array_diff_key($linkParams, ['sort' => true])}
+                {/if}
+                <a class="dropdown-item{if $currentSort === $key} active{/if}"
+                   href="{plink Category:default, (expand) $linkParams}">
+                    {$label}
+                </a>
+            </li>
+        {/foreach}
+    </ul>
+</div>
