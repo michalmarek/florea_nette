@@ -160,6 +160,49 @@ class ProductRepository
     }
 
     /**
+     * Get product IDs for menu category (ID-only, no full row loading)
+     *
+     * Same business logic as getProductsByMenuCategorySelection
+     * but optimized for filter workflow — returns only int[] of IDs.
+     *
+     * @param int[] $menuCategoryIds Parent + all descendant menu category IDs
+     * @return int[]
+     */
+    public function getProductIdsByMenuCategory(int $shopId, array $menuCategoryIds): array
+    {
+        $baseCategoryIds = $this->database->table('es_menu_categories')
+            ->select('base_category_id')
+            ->where('id', $menuCategoryIds)
+            ->fetchPairs(null, 'base_category_id');
+
+        $manualProductIds = $this->database->table('es_menu_category_products')
+            ->select('product_id')
+            ->where('menu_category_id', $menuCategoryIds)
+            ->fetchPairs(null, 'product_id');
+
+        $productIds = [];
+
+        if (!empty($baseCategoryIds)) {
+            $categoryProducts = $this->database->table('es_zbozi')
+                ->select('id')
+                ->where('shop', $shopId)
+                ->where('fl_kategorie', $baseCategoryIds)
+                ->where('fl_zobrazovat', '1')
+                ->fetchPairs(null, 'id');
+
+            $productIds = array_merge($productIds, $categoryProducts);
+        }
+
+        if (!empty($manualProductIds)) {
+            $productIds = array_merge($productIds, $manualProductIds);
+        }
+
+        $productIds = array_unique($productIds);
+
+        return $this->filterVisibleIds($productIds, $shopId);
+    }
+
+    /**
      * Filter product IDs by parameter values and price range
      *
      * AND logic between groups, OR logic within item-based group.

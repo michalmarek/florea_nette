@@ -49,10 +49,9 @@ class CategoryPresenter extends BasePresenter
 
         // Products (funnel: all descendants + manual assignments)
         $menuCategoryIds = $this->menuCategoryRepository->getAllDescendantIds($category->id, $shopId);
-        $selection = $this->productRepository->getProductsByMenuCategorySelection($shopId, $menuCategoryIds);
 
         // All product IDs before filtering (for filter counts)
-        $allProductIds = array_map(fn($row) => (int) $row->id, iterator_to_array($selection));
+        $allProductIds = $this->productRepository->getProductIdsByMenuCategory($shopId, $menuCategoryIds);
 
         // Parse filter params from URL (handles both JS and no-JS format)
         $activeParams = $this->getFilterParams();
