@@ -160,6 +160,101 @@ class ProductRepository
     }
 
     /**
+     * Filter product IDs by parameter values and price range
+     *
+     * AND logic between groups, OR logic within item-based group.
+     *
+     * @param int[] $productIds Starting set of product IDs
+     * @param array<int, int[]> $itemFilters group_id => [item_id, ...]
+     * @param array<int, array{min: ?float, max: ?float}> $numericFilters group_id => [min, max]
+     * @param array{min: ?float, max: ?float}|null $priceFilter
+     * @return int[] Filtered product IDs
+     */
+    public function filterProductIds(
+        array $productIds,
+        array $itemFilters,
+        array $numericFilters,
+        ?array $priceFilter,
+        bool $stockFilter = false,
+    ): array {
+        if (empty($productIds)) {
+            return [];
+        }
+
+        $filtered = $productIds;
+
+        // Item-based filters
+        foreach ($itemFilters as $groupId => $itemIds) {
+            if (empty($itemIds)) {
+                continue;
+            }
+
+            $matching = $this->database->table('es_zboziParameters')
+                ->where('product_id', $filtered)
+                ->where('group_id', $groupId)
+                ->where('item_id', $itemIds)
+                ->fetchPairs(null, 'product_id');
+
+            $filtered = array_values(array_intersect($filtered, $matching));
+
+            if (empty($filtered)) {
+                return [];
+            }
+        }
+
+        // Numeric filters (freeInteger range)
+        foreach ($numericFilters as $groupId => $range) {
+            $query = $this->database->table('es_zboziParameters')
+                ->where('product_id', $filtered)
+                ->where('group_id', $groupId)
+                ->where('freeInteger IS NOT NULL');
+
+            if ($range['min'] !== null) {
+                $query->where('freeInteger >= ?', (int) $range['min']);
+            }
+            if ($range['max'] !== null) {
+                $query->where('freeInteger <= ?', (int) $range['max']);
+            }
+
+            $matching = $query->fetchPairs(null, 'product_id');
+            $filtered = array_values(array_intersect($filtered, $matching));
+
+            if (empty($filtered)) {
+                return [];
+            }
+        }
+
+        // Price filter (cenaFlorea * 1.21 approximation)
+        if ($priceFilter !== null) {
+            $query = $this->database->table('es_zbozi')
+                ->select('id')
+                ->where('id', $filtered);
+
+            if ($priceFilter['min'] !== null) {
+                $query->where('cenaFlorea * 1.21 >= ?', $priceFilter['min']);
+            }
+            if ($priceFilter['max'] !== null) {
+                $query->where('cenaFlorea * 1.21 <= ?', $priceFilter['max']);
+            }
+
+            $filtered = array_values($query->fetchPairs(null, 'id'));
+        }
+
+        // Stock filter
+        if ($stockFilter) {
+            $inStock = $this->database->table('es_zbozi')
+                ->select('id')
+                ->where('id', $filtered)
+                ->where('sklad > ?', 0)
+                ->fetchPairs(null, 'id');
+
+            $filtered = array_values($inStock);
+        }
+
+        return $filtered;
+    }
+
+    /**
      * Get Selection for visible products in shop
      */
     public function getVisibleProductsSelection(int $shopId): Selection

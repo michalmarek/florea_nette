@@ -27,26 +27,59 @@
     </div>
 {/if}
 
-{* Products Grid *}
-{if count($products) > 0}
-    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 mb-4">
-        {foreach $products as $product}
-            <div class="col">
-                {include '../components/productCard.latte', product: $product}
-            </div>
-        {/foreach}
-    </div>
-{else}
-    <p class="text-muted">V této kategorii nejsou žádné produkty.</p>
-{/if}
+{* Products with filter sidebar *}
+<div class="row">
 
-{* Pagination *}
-{include '../components/pagination.latte',
-    page: $pagination['page'],
-    lastPage: $pagination['lastPage'],
-    destination: 'Category:default',
-    params: ['slug' => $category->url]
-}
+    {* Filter sidebar *}
+    <div class="col-lg-3 mb-4">
+        {include '../components/filters.latte',
+            filters: $filters,
+            activeParams: $activeFilterParams,
+            slug: $category->url
+        }
+    </div>
+    <div class="col-lg-9">
+
+        {* Product count *}
+        <p class="text-muted mb-3">
+            {if $totalProducts === 0}Žádné produkty
+            {elseif $totalProducts === 1}1 produkt
+            {elseif $totalProducts >= 2 && $totalProducts <= 4}{$totalProducts} produkty
+            {else}{$totalProducts} produktů
+            {/if}
+        </p>
+
+        {* Products Grid *}
+        {if count($products) > 0}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+                {foreach $products as $product}
+                    <div class="col">
+                        {include '../components/productCard.latte', product: $product}
+                    </div>
+                {/foreach}
+            </div>
+        {else}
+            <p class="text-muted">
+                {if count($activeFilterParams) > 0}
+                    Žádné produkty neodpovídají zvoleným filtrům.
+                    <a href="{link Category:default, slug: $category->url}">Zrušit filtry</a>
+                {else}
+                    V této kategorii nejsou žádné produkty.
+                {/if}
+            </p>
+        {/if}
+
+        {* Pagination — preserves active filters *}
+        {var $paginationParams = array_merge($activeFilterParams, ['slug' => $category->url])}
+        {include '../components/pagination.latte',
+            page: $pagination['page'],
+            lastPage: $pagination['lastPage'],
+            destination: 'this',
+            params: $paginationParams
+        }
+
+    </div>
+</div>
 
 {* SEO text *}
 {if $category->productsDescription}

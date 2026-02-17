@@ -1,0 +1,146 @@
+{*
+ * Category filters component
+ *
+ * @param CategoryFilter[] $filters
+ * @param array $activeParams
+ * @param string $slug
+ *}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>Filtry</strong>
+        {if count($activeParams) > 0}
+            <a href="{link Category:default, slug: $slug}" class="btn btn-sm btn-outline-secondary">
+                Zrušit vše
+            </a>
+        {/if}
+    </div>
+
+    <div class="card-body">
+        <form class="filter-form" method="get" action="{link Category:default, slug: $slug}">
+
+            {foreach $filters as $filter}
+                <div class="mb-4{if !$iterator->last} border-bottom pb-4{/if}">
+                    <h6 class="fw-bold mb-2">
+                        {$filter->name}
+                        {if $filter->units}
+                            <small class="text-muted fw-normal">({$filter->units})</small>
+                        {/if}
+                    </h6>
+
+                    {if $filter->isItemType()}
+                        {foreach $filter->items as $item}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox"
+                                       name="{$filter->key}[]"
+                                       value="{$item['id']}"
+                                       id="filter-{$filter->key}-{$item['id']}"
+                                       {if in_array($item['id'], $filter->activeItems)}checked{/if}>
+                                <label class="form-check-label" for="filter-{$filter->key}-{$item['id']}">
+                                    {$item['value']}
+                                    <small class="text-muted">({$item['count']})</small>
+                                </label>
+                            </div>
+                        {/foreach}
+
+                    {elseif $filter->isRangeType()}
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">od</span>
+                                    <input type="number" class="form-control"
+                                           name="{$filter->key}_min"
+                                           value="{$filter->activeMin}"
+                                           min="{$filter->min}" max="{$filter->max}"
+                                           placeholder="{$filter->min|number:0}">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">do</span>
+                                    <input type="number" class="form-control"
+                                           name="{$filter->key}_max"
+                                           value="{$filter->activeMax}"
+                                           min="{$filter->min}" max="{$filter->max}"
+                                           placeholder="{$filter->max|number:0}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="small text-muted mt-1">
+                            {$filter->min|number:0} – {$filter->max|number:0}
+                            {if $filter->units} {$filter->units}{/if}
+                        </div>
+                    {elseif $filter->isToggleType()}
+                        {foreach $filter->items as $item}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio"
+                                       name="{$filter->key}"
+                                       value="{$item['id']}"
+                                       id="filter-{$filter->key}-{$item['id']}"
+                                       {if in_array($item['id'], $filter->activeItems)}checked{/if}>
+                                <label class="form-check-label" for="filter-{$filter->key}-{$item['id']}">
+                                    {$item['value']}
+                                    <small class="text-muted">({$item['count']})</small>
+                                </label>
+                            </div>
+                        {/foreach}
+                    {/if}
+                </div>
+            {/foreach}
+
+            <button type="submit" class="btn btn-primary w-100">
+                Filtrovat
+            </button>
+        </form>
+    </div>
+</div>
+
+{* JS: Clean URL format (progressive enhancement) *}
+<script n:syntax="off">
+    (function() {
+        var form = document.querySelector('.filter-form');
+        if (!form) return;
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            var url = new URL(form.action);
+            var params = new URLSearchParams();
+            var checkboxes = {};
+            var ranges = {};
+
+            form.querySelectorAll('input[type="checkbox"]:checked').forEach(function(cb) {
+                var name = cb.name.replace('[]', '');
+                if (!checkboxes[name]) checkboxes[name] = [];
+                checkboxes[name].push(cb.value);
+            });
+
+            form.querySelectorAll('input[type="number"]').forEach(function(input) {
+                var match = input.name.match(/^(.+)_(min|max)$/);
+                if (!match || !input.value) return;
+                if (!ranges[match[1]]) ranges[match[1]] = {min: '', max: ''};
+                ranges[match[1]][match[2]] = input.value;
+            });
+
+            Object.keys(checkboxes).forEach(function(key) {
+                params.set(key, checkboxes[key].join(','));
+            });
+
+            form.querySelectorAll('input[type="radio"]:checked').forEach(function(radio) {
+                if (radio.value !== '1') {
+                    params.set(radio.name, radio.value);
+                }
+            });
+
+            Object.keys(ranges).forEach(function(key) {
+                var r = ranges[key];
+                if (r.min || r.max) {
+                    params.set(key, r.min + '-' + r.max);
+                }
+            });
+
+            url.search = params.toString();
+            window.location.href = url.toString();
+        });
+    })();
+</script>

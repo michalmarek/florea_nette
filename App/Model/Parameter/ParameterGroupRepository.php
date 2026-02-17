@@ -22,6 +22,31 @@ class ParameterGroupRepository
         return $row ? $this->mapToEntity($row) : null;
     }
 
+    /**
+     * Find multiple parameter groups by IDs
+     *
+     * @param int[] $ids
+     * @return ParameterGroup[] Indexed by ID
+     */
+    public function findByIds(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        $rows = $this->database->table('es_parameterGroups')
+            ->where('id', $ids)
+            ->fetchAll();
+
+        $groups = [];
+        foreach ($rows as $row) {
+            $entity = $this->mapToEntity($row);
+            $groups[$entity->id] = $entity;
+        }
+
+        return $groups;
+    }
+
     private function mapToEntity(object $row): ParameterGroup
     {
         return new ParameterGroup(
