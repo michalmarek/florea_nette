@@ -22,34 +22,133 @@ class CategoryFilterService
     ) {}
 
     /**
-     * Get available filters for category listing
+     * Get available filters with dynamic counts
+     *
+     * Counts for each filter are calculated from products filtered
+     * by all OTHER active filters (not the current one).
+     * This ensures users always see relevant options.
      *
      * @param int $baseCategoryId Base category of the current menu category
-     * @param int[] $productIds All product IDs in listing (before filtering)
-     * @param array<string, string> $activeParams URL filter params (f5 => '10,20', price => '100-500')
+     * @param int[] $allProductIds All product IDs in listing (before any filtering)
+     * @param array<string, string> $activeParams URL filter params
      * @return CategoryFilter[]
      */
     public function getAvailableFilters(
         int $baseCategoryId,
-        array $productIds,
+        array $allProductIds,
         array $activeParams,
     ): array {
-        if (empty($productIds)) {
+        if (empty($allProductIds)) {
             return [];
         }
 
-        $filters = $this->buildParameterFilters($baseCategoryId, $productIds, $activeParams);
+        // First pass: determine which filter groups exist and their config
+        $filterConfigs = $this->getFilterConfigs($baseCategoryId);
 
-        // Stock filter (always available)
-        $filters[] = $this->buildStockFilter($productIds, $activeParams);
+        // Build per-filter product sets (filtered by everything EXCEPT that filter)
+        $perFilterProductIds = $this->buildPerFilterProductIds(
+            $allProductIds,
+            $filterConfigs,
+            $activeParams,
+        );
 
-        // Price filter (always available)
-        $priceFilter = $this->buildPriceFilter($productIds, $activeParams);
-        if ($priceFilter !== null) {
-            $filters[] = $priceFilter;
+        // Second pass: build filter objects with dynamic counts
+        $filters = [];
+
+        foreach ($filterConfigs as $config) {
+            $key = $config['key'];
+            $productIds = $perFilterProductIds[$key] ?? $allProductIds;
+            $activeValue = $activeParams[$key] ?? null;
+
+            $filter = match ($config['builder']) {
+                'item' => $this->buildItemFilter($config['group'], $key, $config['sort'], $productIds, $activeValue),
+                'numericCheckbox' => $this->buildNumericCheckboxFilter($config['group'], $key, $config['sort'], $productIds, $activeValue),
+                'numeric' => $this->buildNumericFilter($config['group'], $key, $config['sort'], $productIds, $activeValue),
+                'stock' => $this->buildStockFilter($productIds, $activeParams),
+                'price' => $this->buildPriceFilter($productIds, $activeParams),
+                default => null,
+            };
+
+            if ($filter !== null) {
+                $filters[] = $filter;
+            }
         }
 
         return $filters;
+    }
+
+    /**
+     * Get filter configuration entries (what filters exist, their type and config)
+     *
+     * @return array[] Each entry: [key, builder, sort, group?, display?]
+     */
+    private function getFilterConfigs(int $baseCategoryId): array
+    {
+        $configs = [];
+
+        // Parameter-based filters
+        $category = $this->baseCategoryRepository->findById($baseCategoryId);
+        if ($category && $category->hasParameterGroups()) {
+            $paramConfig = $category->getParameterGroups();
+            $filterableConfig = [];
+            foreach ($paramConfig as $entry) {
+                if (!empty($entry['filter'])) {
+                    $filterableConfig[$entry['id']] = $entry;
+                }
+            }
+
+            if (!empty($filterableConfig)) {
+                $groups = $this->parameterGroupRepository->findByIds(array_keys($filterableConfig));
+
+                foreach ($filterableConfig as $groupId => $conf) {
+                    if (!isset($groups[$groupId])) {
+                        continue;
+                    }
+
+                    $group = $groups[$groupId];
+                    $display = $conf['display'] ?? null;
+                    $sort = (int) ($conf['sort'] ?? 0);
+                    $key = 'f' . $groupId;
+
+                    if ($group->isItemBased()) {
+                        $builder = 'item';
+                    } elseif ($group->isNumeric() && $display === 'checkbox') {
+                        $builder = 'numericCheckbox';
+                    } elseif ($group->isNumeric()) {
+                        $builder = 'numeric';
+                    } else {
+                        continue;
+                    }
+
+                    $configs[] = [
+                        'key' => $key,
+                        'builder' => $builder,
+                        'sort' => $sort,
+                        'group' => $group,
+                    ];
+                }
+
+                usort($configs, fn($a, $b) => $a['sort'] <=> $b['sort']);
+            }
+        }
+
+        // Stock filter
+        $configs[] = [
+            'key' => 'stock',
+            'builder' => 'stock',
+            'sort' => PHP_INT_MAX - 1,
+            'group' => null,
+        ];
+
+        // Price filter
+        $configs[] = [
+            'key' => 'price',
+            'builder' => 'price',
+            'sort' => PHP_INT_MAX,
+            'group' => null,
+        ];
+
+        return $configs;
     }
 
     /**
@@ -103,63 +202,126 @@ class CategoryFilterService
         ];
     }
 
+    /**
+     * Parse active URL params into structured filter data
+     *
+     * @return array<string, array> key => [type, values/range]
+     */
+    private function parseActiveParamsRaw(array $activeParams, array $filterConfigs): array
+    {
+        $active = [];
+
+        // Index configs by key for lookup
+        $configByKey = [];
+        foreach ($filterConfigs as $config) {
+            $configByKey[$config['key']] = $config;
+        }
+
+        foreach ($activeParams as $key => $value) {
+            if ($value === '' || $value === null) {
+                continue;
+            }
+
+            if ($key === 'stock') {
+                if ($value === '0') {
+                    // stock=0 means show all, no filtering
+                    continue;
+                }
+                $active[$key] = ['type' => 'stock'];
+                continue;
+            }
+
+            if ($key === 'price') {
+                [$min, $max] = $this->parseRangeValue($value);
+                if ($min !== null || $max !== null) {
+                    $active[$key] = ['type' => 'price', 'min' => $min, 'max' => $max];
+                }
+                continue;
+            }
+
+            if (!isset($configByKey[$key])) {
+                continue;
+            }
+
+            $config = $configByKey[$key];
+
+            if ($config['builder'] === 'item' || $config['builder'] === 'numericCheckbox') {
+                $ids = array_map('intval', explode(',', $value));
+                $groupId = $this->extractGroupId($key);
+                $active[$key] = [
+                    'type' => $config['builder'],
+                    'groupId' => $groupId,
+                    'values' => $ids,
+                ];
+            } elseif ($config['builder'] === 'numeric') {
+                [$min, $max] = $this->parseRangeValue($value);
+                $groupId = $this->extractGroupId($key);
+                if ($min !== null || $max !== null) {
+                    $active[$key] = [
+                        'type' => 'numeric',
+                        'groupId' => $groupId,
+                        'min' => $min,
+                        'max' => $max,
+                    ];
+                }
+            }
+        }
+
+        // Default stock filter (no param = filter by stock)
+        if (!isset($activeParams['stock']) || $activeParams['stock'] !== '0') {
+            $active['stock'] = ['type' => 'stock'];
+        }
+
+        return $active;
+    }
+
     // === Private builders ===
 
-    private function buildParameterFilters(
-        int $baseCategoryId,
-        array $productIds,
+    /**
+     * Build per-filter product ID sets for dynamic counts
+     *
+     * For each filter, applies all OTHER active filters to get
+     * the product set used for counting that filter's values.
+     *
+     * @return array<string, int[]> key => filtered product IDs
+     */
+    private function buildPerFilterProductIds(
+        array $allProductIds,
+        array $filterConfigs,
         array $activeParams,
     ): array {
-        $category = $this->baseCategoryRepository->findById($baseCategoryId);
-        if (!$category || !$category->hasParameterGroups()) {
+
+        // Parse all active filter values (includes default stock filter)
+        $activeFilters = $this->parseActiveParamsRaw($activeParams, $filterConfigs);
+
+        if (empty($activeFilters)) {
             return [];
         }
 
-        $config = $category->getParameterGroups();
-        $filterableConfig = [];
-        foreach ($config as $entry) {
-            if (!empty($entry['filter'])) {
-                $filterableConfig[$entry['id']] = $entry;
+        $result = [];
+
+        foreach ($filterConfigs as $config) {
+            $key = $config['key'];
+
+            // Build filter set excluding current filter
+            $filtered = $allProductIds;
+
+            foreach ($activeFilters as $filterKey => $filterData) {
+                if ($filterKey === $key) {
+                    continue; // Skip current filter
+                }
+
+                $filtered = $this->applyOneFilter($filtered, $filterKey, $filterData);
+
+                if (empty($filtered)) {
+                    break;
+                }
             }
+
+            $result[$key] = $filtered;
         }
 
-        if (empty($filterableConfig)) {
-            return [];
-        }
-
-        $groups = $this->parameterGroupRepository->findByIds(array_keys($filterableConfig));
-
-        $filters = [];
-        foreach ($filterableConfig as $groupId => $conf) {
-            if (!isset($groups[$groupId])) {
-                continue;
-            }
-
-            $group = $groups[$groupId];
-            $sort = (int) ($conf['sort'] ?? 0);
-            $key = 'f' . $groupId;
-            $activeValue = $activeParams[$key] ?? null;
-
-            $display = $conf['display'] ?? null;
-
-            if ($group->isItemBased()) {
-                $filter = $this->buildItemFilter($group, $key, $sort, $productIds, $activeValue);
-            } elseif ($group->isNumeric() && $display === 'checkbox') {
-                $filter = $this->buildNumericCheckboxFilter($group, $key, $sort, $productIds, $activeValue);
-            } elseif ($group->isNumeric()) {
-                $filter = $this->buildNumericFilter($group, $key, $sort, $productIds, $activeValue);
-            } else {
-                continue;
-            }
-
-            if ($filter !== null) {
-                $filters[] = $filter;
-            }
-        }
-
-        usort($filters, fn(CategoryFilter $a, CategoryFilter $b) => $a->sort <=> $b->sort);
-
-        return $filters;
+        return $result;
     }
 
     private function buildItemFilter(
@@ -365,6 +527,75 @@ class CategoryFilterService
             ],
             activeItems: $showAll ? [0] : [1],
         );
+    }
+
+    /**
+     * Apply a single filter to product IDs
+     *
+     * @param int[] $productIds
+     * @return int[]
+     */
+    private function applyOneFilter(array $productIds, string $key, array $filterData): array
+    {
+        if (empty($productIds)) {
+            return [];
+        }
+
+        switch ($filterData['type']) {
+            case 'item':
+                $matching = $this->database->table('es_zboziParameters')
+                    ->where('product_id', $productIds)
+                    ->where('group_id', $filterData['groupId'])
+                    ->where('item_id', $filterData['values'])
+                    ->fetchPairs(null, 'product_id');
+                return array_values(array_intersect($productIds, $matching));
+
+            case 'numericCheckbox':
+                $matching = $this->database->table('es_zboziParameters')
+                    ->where('product_id', $productIds)
+                    ->where('group_id', $filterData['groupId'])
+                    ->where('freeInteger', $filterData['values'])
+                    ->fetchPairs(null, 'product_id');
+                return array_values(array_intersect($productIds, $matching));
+
+            case 'numeric':
+                $query = $this->database->table('es_zboziParameters')
+                    ->where('product_id', $productIds)
+                    ->where('group_id', $filterData['groupId'])
+                    ->where('freeInteger IS NOT NULL');
+                if ($filterData['min'] !== null) {
+                    $query->where('freeInteger >= ?', (int) $filterData['min']);
+                }
+                if ($filterData['max'] !== null) {
+                    $query->where('freeInteger <= ?', (int) $filterData['max']);
+                }
+                $matching = $query->fetchPairs(null, 'product_id');
+                return array_values(array_intersect($productIds, $matching));
+
+            case 'price':
+                $query = $this->database->table('es_zbozi')
+                    ->select('id')
+                    ->where('id', $productIds);
+                if ($filterData['min'] !== null) {
+                    $query->where('cenaFlorea * 1.21 >= ?', $filterData['min']);
+                }
+                if ($filterData['max'] !== null) {
+                    $query->where('cenaFlorea * 1.21 <= ?', $filterData['max']);
+                }
+                return array_values($query->fetchPairs(null, 'id'));
+
+            case 'stock':
+                return array_values(
+                    $this->database->table('es_zbozi')
+                        ->select('id')
+                        ->where('id', $productIds)
+                        ->where('sklad > ?', 0)
+                        ->fetchPairs(null, 'id')
+                );
+
+            default:
+                return $productIds;
+        }
     }
 
     // === Helpers ===
