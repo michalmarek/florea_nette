@@ -22,11 +22,11 @@
                 <p class="h5 mb-3">
                     {if $product->isOnSale()}
                         <small class="text-muted text-decoration-line-through">
-                            {$product->getOriginalPriceWithVat()|number:0} Kč
+                            {$product->getOriginalPriceWithVat()|price}
                         </small>
                         <br>
                     {/if}
-                    {$product->getPriceWithVat()|number:0} Kč
+                    {$product->getPriceWithVat()|price}
                 </p>
             {else}
                 <p class="h5 mb-3 text-muted">Cena na dotaz</p>

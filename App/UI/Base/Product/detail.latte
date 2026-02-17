@@ -22,15 +22,15 @@
                 {if $product->getPriceWithVat() > 0}
                     {if $product->isOnSale()}
                         <div class="text-muted text-decoration-line-through">
-                            {$product->getOriginalPriceWithVat()|number:0} Kč
+                            {$product->getOriginalPriceWithVat()|price}
                         </div>
                     {/if}
                     <div class="h2 text-primary mb-1">
-                        {$product->getPriceWithVat()|number:0} Kč
+                        {$product->getPriceWithVat()|price}
                         <small class="text-muted fs-6">s DPH</small>
                     </div>
                     <p class="text-muted mb-0">
-                        <small>{$product->getPrice()|number:0} Kč bez DPH</small>
+                        <small>{$product->getPrice()|price} bez DPH</small>
                     </p>
                 {else}
                     <div class="h4 text-muted">Cena na dotaz</div>
