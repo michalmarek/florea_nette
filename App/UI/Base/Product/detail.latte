@@ -74,7 +74,12 @@
             </div>
         {/if}
 
-        {* TODO: Přidat do košíku - doplnit po migraci Cart *}
+        {* Přidat do košíku *}
+        {if $product->isInStock() && $product->getPriceWithVat() > 0}
+            <div class="mb-4 d-flex align-items-end gap-3">
+                {control addToCartForm}
+            </div>
+        {/if}
 
         <p class="text-muted">ID {$product->id}</p>
     </div>

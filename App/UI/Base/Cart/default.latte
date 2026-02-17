@@ -1,0 +1,216 @@
+{block content}
+
+    <div class="container my-5">
+
+        {* Breadcrumbs *}
+    <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a n:href="Home:default">Úvod</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Košík</li>
+                </ol>
+    </nav>
+
+    <h1 class="mb-4">Nákupní košík</h1>
+
+    {* Progress Steps *}
+    <div class="row mb-5">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between position-relative">
+                        <div class="text-center" style="z-index: 1;">
+                            <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px;">
+                                <strong>1</strong>
+                            </div>
+                            <div class="fw-bold">Košík</div>
+                        </div>
+
+                        <div class="position-absolute top-0 start-0 w-100" style="height: 25px; z-index: 0;">
+                            <div class="border-top border-2 border-secondary" style="margin-top: 25px;"></div>
+                        </div>
+
+                        <div class="text-center text-muted" style="z-index: 1;">
+                            <div class="rounded-circle bg-secondary text-white d-inline-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px;">
+                                <strong>2</strong>
+                            </div>
+                            <div>Doprava a platba</div>
+                        </div>
+
+                        <div class="text-center text-muted" style="z-index: 1;">
+                            <div class="rounded-circle bg-secondary text-white d-inline-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px;">
+                                <strong>3</strong>
+                            </div>
+                            <div>Souhrn</div>
+                        </div>
+                    </div>
+                </div>
+    </div>
+
+    {* Empty Cart *}
+    {if $cart->isEmpty()}
+            <div class="alert alert-info">
+                <h4 class="alert-heading mb-3">Váš košík je prázdný</h4>
+                <p class="mb-0">Začněte nakupovat v našem <a n:href="Home:default" class="alert-link fw-bold">katalogu produktů</a>.</p>
+            </div>
+
+        {else}
+            <div class="row g-4">
+
+                {* Left Column - Products *}
+            <div class="col-lg-8">
+                    <div class="card mb-3">
+                        <div class="card-header bg-white py-3">
+                            <h5 class="mb-0">Produkty v košíku <span class="text-muted">({$cart->getItemCount()} ks)</span></h5>
+                        </div>
+                        <div class="card-body p-0">
+
+                            {foreach $cart->getItems() as $item}
+                                {var $product = $item->getProduct()}
+
+                                <div class="p-3 {if !$iterator->last}border-bottom{/if}">
+                                    <div class="row g-3 align-items-center">
+
+                                        {* Product Image *}
+                                    <div class="col-auto d-none d-md-block">
+                                                <div class="bg-light rounded" style="width: 80px; height: 80px;"></div>
+                                    </div>
+
+                                    {* Product Info *}
+                                    <div class="col-md-4 col-12">
+                                                <h6 class="mb-2">
+                                                    <a n:href="Product:detail, id => $product->id" class="text-decoration-none text-dark">
+                                                        {$product->name}
+                                                    </a>
+                                                </h6>
+
+                                                {if !$product->isAvailable()}
+                                                    <span class="badge bg-danger">Nedostupné</span>
+                                                {elseif $product->stock < 10}
+                                                    <span class="badge bg-warning text-dark">Poslední kusy ({$product->stock} ks)</span>
+                                                {else}
+                                                    <span class="badge bg-success">Skladem</span>
+                                                {/if}
+
+                                                <div class="text-muted small mt-2">
+                                                    Cena za ks: <strong>{$product->getPrice()|price}</strong>
+                                                </div>
+                                    </div>
+
+                                    {* Quantity - Multiplier form *}
+                                    <div class="col-md-3 col-6">
+                                                <label class="form-label small text-muted mb-1">Množství</label>
+                                                {control "quantityForm-$item->productId"}
+                                    </div>
+
+                                    {* Subtotal *}
+                                    <div class="col-md-3 col-6 text-end">
+                                                <label class="form-label small text-muted mb-1 d-md-none">Mezisoučet</label>
+                                                <div class="fw-bold fs-5">{$item->getSubtotal()|price}</div>
+                                    </div>
+
+                                    {* Remove *}
+                                        <div class="col-md-1 col-12 text-md-end">
+                                            <a
+                                            n:href="remove!, productId => $product->id"
+                                            class="btn btn-sm btn-outline-danger w-100 w-md-auto"
+                                            onclick="return confirm('Opravdu chcete odebrat {$product->name} z košíku?')"
+                                            >
+                                            Odebrat
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            {/foreach}
+
+                        </div>
+                    </div>
+
+                    {* Action Buttons *}
+                    <div class="d-flex flex-column flex-md-row justify-content-between gap-2">
+                        <a n:href="Home:default" class="btn btn-outline-secondary">
+                            ← Pokračovat v nákupu
+                        </a>
+
+                        <a
+                        n:href="clear!"
+                        class="btn btn-outline-danger"
+                        onclick="return confirm('Opravdu chcete vyprázdnit celý košík?')"
+                        >
+                        Vyprázdnit košík
+                        </a>
+                    </div>
+                </div>
+
+                {* Right Column - Summary *}
+                <div class="col-lg-4">
+
+                    {* Discount Code *}
+                <div class="card mb-3">
+                            <div class="card-body">
+                                {if !$cart->hasDiscountCode()}
+                                    <h6 class="card-title mb-3">Slevový kód</h6>
+                                {control discountForm}
+                                {else}
+                                    <h6 class="card-title text-success mb-3">✓ Slevový kód použit</h6>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-success fs-6 px-3 py-2">
+                                    {$cart->getDiscountCode()}
+                                </span>
+                                        <a n:href="removeDiscount!" class="btn btn-sm btn-outline-danger">
+                                            Odebrat
+                                        </a>
+                                    </div>
+                                {/if}
+                            </div>
+                </div>
+
+                {* Order Summary *}
+                    <div class="card">
+                        <div class="card-header bg-white py-3">
+                            <h5 class="mb-0">Shrnutí objednávky</h5>
+                        </div>
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Mezisoučet ({$cart->getItemCount()} ks):</span>
+                                <strong>{$cart->getTotalPrice()|price}</strong>
+                            </div>
+
+                            {if $cart->hasDiscountCode()}
+                                <div class="d-flex justify-content-between mb-2 text-success">
+                                    <span>Sleva ({$cart->getDiscountCode()}):</span>
+                                    <strong>− 0 Kč</strong>
+                                </div>
+                                <p class="text-muted small mb-3">
+                                    <em>Sleva bude vypočítána v dalším kroku</em>
+                                </p>
+                            {/if}
+
+                            <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
+                                <span class="text-muted">Doprava:</span>
+                                <span class="text-muted">bude vypočítána</span>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="mb-0">Celkem:</h5>
+                                <h4 class="mb-0 text-primary">{$cart->getTotalPrice()|price}</h4>
+                            </div>
+
+                            <a href="#" class="btn btn-primary btn-lg w-100 mb-3">
+                                Pokračovat na dopravu →
+                            </a>
+
+                            <div class="text-center">
+                                <small class="text-muted">🔒 Zabezpečená platba</small>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        {/if}
+
+    </div>
+
+{/block}
