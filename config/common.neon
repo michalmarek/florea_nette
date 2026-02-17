@@ -7,6 +7,11 @@ includes:
     - email.neon
 
 
+php:
+    date.timezone: Europe/Prague
+    intl.default_locale: cs_CZ
+
+
 parameters:
     # Application-wide parameters
     productsPerPage: 20
@@ -20,6 +25,7 @@ application:
 
 
 latte:
+    locale: cs
     extensions:
         - App\Core\Latte\IconExtension
         - App\Core\Latte\PriceExtension

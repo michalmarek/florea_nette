@@ -15,6 +15,6 @@ class PriceExtension extends Extension
 
     private function formatPrice(float $price): string
     {
-        return number_format($price, 0, '.', ' ') . ' Kč';
+        return number_format($price, 0, ',', ' ') . ' Kč';
     }
 }
