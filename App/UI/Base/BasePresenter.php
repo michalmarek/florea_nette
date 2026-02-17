@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\UI\Base;
 
 use App\Core\FormFactory;
-use App\Model\Category\MenuCategoryRepository;
-use Nette\Application\UI\Presenter;
 use App\Shop\ShopContext;
+use App\Model\Cart\CartRepository;
+use App\Model\Category\MenuCategoryRepository;
+use App\Model\Product\ProductRepository;
+use Nette\Application\UI\Presenter;
 
 /**
  * Base presenter for all application presenters
@@ -21,23 +23,33 @@ abstract class BasePresenter extends Presenter
 {
     // ShopContext injected via DI (available in all child presenters)
     protected ?ShopContext $shopContext = null;
-    private MenuCategoryRepository $menuCategoryRepository;
-    protected FormFactory $formFactory;
-
     public function injectShopContext(ShopContext $shopContext): void
     {
         $this->shopContext = $shopContext;
     }
 
+    protected FormFactory $formFactory;
     public function injectFormFactory(\App\Core\FormFactory $formFactory): void
     {
         $this->formFactory = $formFactory;
     }
 
+    private MenuCategoryRepository $menuCategoryRepository;
     public function injectMenuCategoryRepository(
         MenuCategoryRepository $menuCategoryRepository,
     ): void {
         $this->menuCategoryRepository = $menuCategoryRepository;
+    }
+
+    private CartRepository $cartRepository;
+    private ProductRepository $productRepository;
+    public function injectCartMini(
+        CartRepository $cartRepository,
+        ProductRepository $productRepository
+    ): void
+    {
+        $this->cartRepository = $cartRepository;
+        $this->productRepository = $productRepository;
     }
 
     protected function startup(): void
@@ -171,8 +183,16 @@ abstract class BasePresenter extends Presenter
             $this->shopContext->getId(),
         );
 
+        // mini cart
+        $cartMini = $this->cartRepository->get();
+        if (!$cartMini->isEmpty()) {
+            $products = $this->productRepository->findByIds($cartMini->getProductIds(), $this->shopContext->getId());
+            $cartMini->attachProducts($products);
+        }
+
         // Add presenter and action to template (useful for CSS classes, debugging)
         $this->template->presenterName = $this->getName();
         $this->template->actionName = $this->getAction();
+        $this->template->cartMini = $cartMini;
     }
 }
