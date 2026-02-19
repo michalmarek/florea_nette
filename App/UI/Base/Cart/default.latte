@@ -83,7 +83,7 @@
 
                                                 {if !$product->isAvailable()}
                                                     <span class="badge bg-danger">Nedostupné</span>
-                                                {elseif $product->stock < 10}
+                                                {elseif $product->stock < 5}
                                                     <span class="badge bg-warning text-dark">Poslední kusy ({$product->stock} ks)</span>
                                                 {else}
                                                     <span class="badge bg-success">Skladem</span>
@@ -107,15 +107,106 @@
                                     </div>
 
                                     {* Remove *}
-                                        <div class="col-md-1 col-12 text-md-end">
-                                            <a
-                                            n:href="remove!, productId => $product->id"
-                                            class="btn btn-sm btn-outline-danger w-100 w-md-auto"
-                                            onclick="return confirm('Opravdu chcete odebrat {$product->name} z košíku?')"
-                                            >
-                                            Odebrat
-                                            </a>
+                                    <div class="col-md-4 col-12 text-md-end">
+                                        <a
+                                        n:href="remove!, productId => $product->id"
+                                        class="btn btn-sm btn-outline-danger w-100 w-md-auto"
+                                        onclick="return confirm('Opravdu chcete odebrat {$product->name} z košíku?')"
+                                        >
+                                        Odebrat
+                                        </a>
+                                    </div>
+
+                                    {* Upsells *}
+                                    {var $upsells = $availableUpsells[$item->productId] ?? []}
+                                    {if $upsells}
+                                    <div class="col-12 mt-2 pt-2 border-top">
+                                        <div class="small text-muted mb-2">Doplňky:</div>
+
+                                        {foreach $upsells as $upsell}
+                                            {var $isAdded = $cart->hasUpsell($item->productId, $upsell['key'])}
+
+                                            <div class="d-flex align-items-start gap-2 mb-2">
+
+                                                {if $isAdded}
+                                                {* Already added — show info + remove *}
+                                                <div class="d-flex align-items-center gap-2 flex-grow-1">
+                                                    <span class="badge bg-success">✓</span>
+                                                    <div>
+                                                        <strong>{$upsell['label'] ?? $upsell['product']->name}</strong>
+                                                        <span class="text-muted">({$upsell['product']->getPrice()|price})</span>
+
+                                                        {var $savedUpsell = $cart->getUpsell($item->productId, $upsell['key'])}
+                                                        {if $savedUpsell && $savedUpsell['inputValue']}
+                                                            <div class="text-muted small fst-italic">
+                                                                {$savedUpsell['inputValue']}
+                                                            </div>
+                                                        {/if}
+                                                    </div>
+                                                    <a n:href="removeUpsell!, mainProductId => $item->productId, key => $upsell['key']"
+                                                            class="btn btn-sm btn-outline-danger ms-auto">
+                                                        ×
+                                                    </a>
+                                                </div>
+
+                                                {elseif $upsell['type'] === 'simple'}
+                                                {* Simple — just a link *}
+                                                <a n:href="addUpsell!, mainProductId => $item->productId, key => $upsell['key'], upsellProductId => $upsell['product']->id"
+                                                    class="btn btn-sm btn-outline-secondary">
+                                                    + {$upsell['label'] ?? $upsell['product']->name}
+                                                    <span class="text-muted">({$upsell['product']->getPrice()|price})</span>
+                                                </a>
+
+                                                {elseif $upsell['type'] === 'text_input'}
+                                                {* Text input — form with textarea *}
+                                                <div class="flex-grow-1">
+                                                    {var $formKey = $item->productId . '_' . $upsell['key']}
+                                                    {form "upsellInputForm-$formKey"}
+                                                        <input n:name="mainProductId" value="{$item->productId}" type="hidden">
+                                                        <input n:name="key" value="{$upsell['key']}" type="hidden">
+                                                        <input n:name="upsellProductId" value="{$upsell['product']->id}" type="hidden">
+                                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                                            <strong>{$upsell['label']}</strong>
+                                                            <span class="text-muted">({$upsell['product']->getPrice()|price})</span>
+                                                        </div>
+                                                        <div class="d-flex gap-2">
+                                                            <input n:name="inputValue"
+                                                                    class="form-control form-control-sm"
+                                                                    placeholder="{$upsell['inputLabel']}">
+                                                            <button n:name="submit" class="btn btn-sm btn-outline-primary">Přidat</button>
+                                                        </div>
+                                                    {/form}
+                                                </div>
+
+                                                {elseif $upsell['type'] === 'select'}
+                                                {* Select — form with dropdown *}
+                                                <div class="flex-grow-1">
+                                                    {var $formKey = $item->productId . '_' . $upsell['key']}
+                                                    {form "upsellInputForm-$formKey"}
+                                                        <input n:name="mainProductId" value="{$item->productId}" type="hidden">
+                                                        <input n:name="key" value="{$upsell['key']}" type="hidden">
+                                                        <input n:name="upsellProductId" value="{$upsell['product']->id}" type="hidden">
+                                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                                            <strong>{$upsell['label']}</strong>
+                                                            <span class="text-muted">({$upsell['product']->getPrice()|price})</span>
+                                                        </div>
+                                                        <div class="d-flex gap-2">
+                                                            <select n:name="inputValue" class="form-select form-select-sm">
+                                                                <option value="">-- {$upsell['inputLabel']} --</option>
+                                                                {foreach $upsell['options'] as $optValue => $optLabel}
+                                                                    <option value="{$optValue}">{$optLabel}</option>
+                                                                {/foreach}
+                                                            </select>
+                                                            <button n:name="submit" class="btn btn-sm btn-outline-primary">Přidat</button>
+                                                        </div>
+                                                    {/form}
+                                                </div>
+                                                {/if}
+                                            </div>
+                                        {/foreach}
+
                                         </div>
+                                    {/if}
 
                                     </div>
                                 </div>

@@ -26,6 +26,12 @@ class BaseCategory
         public readonly int $position,
 
         private readonly ?string $parameterGroups,
+        private readonly ?string $upsellProducts,
+        public readonly bool $upsellCardMessage,
+        public readonly bool $upsellRibbonMessage,
+        public readonly bool $upsellPremiumRibbon,
+        public readonly bool $upsellPhoto,
+        public readonly bool $upsellVase,
     ) {}
 
     /**
@@ -56,5 +62,32 @@ class BaseCategory
     public function hasParameterGroups(): bool
     {
         return !empty($this->getParameterGroups());
+    }
+
+    /**
+     * Get upsell product IDs as array
+     */
+    public function getUpsellProducts(): array
+    {
+        if ($this->upsellProducts === null || $this->upsellProducts === '') {
+            return [];
+        }
+
+        $decoded = json_decode($this->upsellProducts, true);
+
+        return is_array($decoded) ? array_map('intval', $decoded) : [];
+    }
+
+    /**
+     * Check if category has any upsell configuration
+     */
+    public function hasUpsells(): bool
+    {
+        return !empty($this->getUpsellProducts())
+            || $this->upsellCardMessage
+            || $this->upsellRibbonMessage
+            || $this->upsellPremiumRibbon
+            || $this->upsellPhoto
+            || $this->upsellVase;
     }
 }

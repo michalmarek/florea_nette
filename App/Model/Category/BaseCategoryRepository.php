@@ -84,6 +84,12 @@ class BaseCategoryRepository
             visible: $row->zobrazovat === '1',
             position: (int) $row->poradi,
             parameterGroups: $row->parameterGroups,
+            upsellProducts: $row->upsellProducts ?? null,
+            upsellCardMessage: ($row->upsellCardMessage ?? 0) == 1,
+            upsellRibbonMessage: ($row->upsellRibbonMessage ?? 0) == 1,
+            upsellPremiumRibbon: ($row->upsellPremiumRibbon ?? 0) == 1,
+            upsellPhoto: ($row->upsellPhoto ?? 0) == 1,
+            upsellVase: ($row->upsellVase ?? 0) == 1,
         );
     }
 }

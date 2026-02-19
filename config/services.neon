@@ -25,6 +25,8 @@ services:
     - App\Model\Product\ProductRepository
     - App\Model\Product\ProductVariantService
     - App\Model\Cart\CartRepository
+    - App\Model\Cart\UpsellService
+    - App\Model\Cart\VaseResolver
     - App\Model\Customer\CustomerAuthenticator
     - App\Model\Customer\CustomerRepository
     - App\Model\Customer\DeliveryAddressRepository

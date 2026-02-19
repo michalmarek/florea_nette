@@ -2,11 +2,12 @@
 
 namespace App\UI\Base\Cart;
 
-use App\Model\Cart\CartRepository;
-use App\Model\Product\ProductRepository;
-use App\UI\Base\BasePresenter;
 use Nette\Application\UI\Form;
 use Nette\Application\UI\Multiplier;
+use App\Model\Cart\CartRepository;
+use App\Model\Cart\UpsellService;
+use App\Model\Product\ProductRepository;
+use App\UI\Base\BasePresenter;
 
 class CartPresenter extends BasePresenter
 {
@@ -19,6 +20,12 @@ class CartPresenter extends BasePresenter
     ): void {
         $this->cartRepository = $cartRepository;
         $this->productRepository = $productRepository;
+    }
+
+    private UpsellService $upsellService;
+    public function injectUpsell(UpsellService $upsellService): void
+    {
+        $this->upsellService = $upsellService;
     }
 
     // ========================================
@@ -44,6 +51,22 @@ class CartPresenter extends BasePresenter
         }
 
         $this->template->cart = $cart;
+
+
+        // Load available upsells for each cart item
+        $shopId = $this->shopContext->getId();
+        $availableUpsells = [];
+
+        foreach ($cart->getItems() as $item) {
+            if ($item->hasProduct()) {
+                $availableUpsells[$item->productId] = $this->upsellService->getUpsellsForProduct(
+                    $item->getProduct(),
+                    $shopId,
+                );
+            }
+        }
+
+        $this->template->availableUpsells = $availableUpsells;
     }
 
     // ========================================
@@ -123,6 +146,30 @@ class CartPresenter extends BasePresenter
         $this->redirect('this');
     }
 
+    public function handleAddUpsell(int $mainProductId, string $key, int $upsellProductId): void
+    {
+        $cart = $this->cartRepository->get();
+
+        if (!$cart->hasItem($mainProductId)) {
+            $this->flashMessage('Produkt není v košíku', 'danger');
+            $this->redirect('this');
+        }
+
+        $cart->addUpsell($mainProductId, $key, $upsellProductId);
+        $this->cartRepository->save($cart);
+
+        $this->redirect('this');
+    }
+
+    public function handleRemoveUpsell(int $mainProductId, string $key): void
+    {
+        $cart = $this->cartRepository->get();
+        $cart->removeUpsell($mainProductId, $key);
+        $this->cartRepository->save($cart);
+
+        $this->redirect('this');
+    }
+
     // ========================================
     // Components
     // ========================================
@@ -164,6 +211,47 @@ class CartPresenter extends BasePresenter
         $form->onSuccess[] = $this->discountFormSucceeded(...);
 
         return $form;
+    }
+
+    protected function createComponentUpsellInputForm(): Multiplier
+    {
+        return new Multiplier(function (string $compositeKey): Form {
+            // compositeKey format: "{mainProductId}_{upsellKey}"
+            $form = $this->formFactory->create();
+
+            $form->addHidden('mainProductId');
+            $form->addHidden('key');
+            $form->addHidden('upsellProductId');
+
+            // Dynamické pole — buď text input nebo select
+            // Typ se rozhodne v šabloně, sem přijde vždy jako inputValue
+            $form->addText('inputValue', '')
+                ->setHtmlAttribute('class', 'form-control form-control-sm');
+
+            $form->addSubmit('submit', 'Přidat')
+                ->setHtmlAttribute('class', 'btn btn-sm btn-outline-primary');
+
+            $form->onSuccess[] = function (Form $form, \stdClass $values): void {
+                $cart = $this->cartRepository->get();
+
+                if (!$cart->hasItem((int) $values->mainProductId)) {
+                    $this->flashMessage('Produkt není v košíku', 'danger');
+                    $this->redirect('this');
+                }
+
+                $cart->addUpsell(
+                    (int) $values->mainProductId,
+                    $values->key,
+                    (int) $values->upsellProductId,
+                    $values->inputValue !== '' ? $values->inputValue : null,
+                );
+
+                $this->cartRepository->save($cart);
+                $this->redirect('this');
+            };
+
+            return $form;
+        });
     }
 
     // ========================================

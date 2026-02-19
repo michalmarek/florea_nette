@@ -10,6 +10,8 @@ class Cart
     private array $items = [];
     private ?string $discountCode = null;
 
+    /** @var array[] Upsells indexed by main product ID and key */
+    private array $upsells = [];
     public function __construct(
         public readonly int $shopId,
         private DateTimeImmutable $createdAt,
@@ -39,6 +41,7 @@ class Cart
     public function removeItem(int $productId): void
     {
         unset($this->items[$productId]);
+        unset($this->upsells[$productId]);
         $this->touch();
     }
 
@@ -77,6 +80,7 @@ class Cart
     public function clear(): void
     {
         $this->items = [];
+        $this->upsells = [];
         $this->discountCode = null;
         $this->touch();
     }
@@ -160,6 +164,51 @@ class Cart
     }
 
     // ========================================
+    // Upsells
+    // ========================================
+
+    public function addUpsell(int $mainProductId, string $key, int $upsellProductId, ?string $inputValue = null): void
+    {
+        if (!$this->hasItem($mainProductId)) {
+            throw new \InvalidArgumentException("Product {$mainProductId} not in cart");
+        }
+
+        $this->upsells[$mainProductId][$key] = [
+            'productId' => $upsellProductId,
+            'inputValue' => $inputValue,
+        ];
+
+        $this->touch();
+    }
+
+    public function removeUpsell(int $mainProductId, string $key): void
+    {
+        unset($this->upsells[$mainProductId][$key]);
+
+        // Clean up empty array for product
+        if (isset($this->upsells[$mainProductId]) && empty($this->upsells[$mainProductId])) {
+            unset($this->upsells[$mainProductId]);
+        }
+
+        $this->touch();
+    }
+
+    public function getUpsellsForItem(int $mainProductId): array
+    {
+        return $this->upsells[$mainProductId] ?? [];
+    }
+
+    public function hasUpsell(int $mainProductId, string $key): bool
+    {
+        return isset($this->upsells[$mainProductId][$key]);
+    }
+
+    public function getUpsell(int $mainProductId, string $key): ?array
+    {
+        return $this->upsells[$mainProductId][$key] ?? null;
+    }
+
+    // ========================================
     // Product Loading
     // ========================================
 
@@ -218,6 +267,7 @@ class Cart
         return [
             'items' => $items,
             'discountCode' => $this->discountCode,
+            'upsells' => $this->upsells,
             'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
             'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
         ];
@@ -237,6 +287,10 @@ class Cart
 
         if (isset($data['discountCode'])) {
             $cart->discountCode = $data['discountCode'];
+        }
+
+        if (isset($data['upsells'])) {
+            $cart->upsells = $data['upsells'];
         }
 
         return $cart;
